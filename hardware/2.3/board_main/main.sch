@@ -17509,8 +17509,6 @@ MAX3223-MAX3243.pdf</description>
 <part name="SV3" library="con-lsta" deviceset="FE05-1" device="" value="TSL1401 CAMERA"/>
 <part name="GND57" library="supply1" deviceset="GND" device=""/>
 <part name="+3V20" library="supply1" deviceset="+3V3" device=""/>
-<part name="C32" library="resistor" deviceset="C-EU" device="C0805" value="4.7uF"/>
-<part name="GND58" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -17758,11 +17756,9 @@ MAX3223-MAX3243.pdf</description>
 <instance part="+3V44" gate="G$1" x="751.84" y="124.46"/>
 <instance part="GND61" gate="1" x="734.06" y="60.96"/>
 <instance part="GND64" gate="1" x="769.62" y="60.96"/>
-<instance part="SV3" gate="G$1" x="502.92" y="73.66" rot="R270"/>
-<instance part="GND57" gate="1" x="497.84" y="60.96"/>
-<instance part="+3V20" gate="G$1" x="500.38" y="55.88" rot="R180"/>
-<instance part="C32" gate="G$1" x="474.98" y="27.94"/>
-<instance part="GND58" gate="1" x="474.98" y="20.32"/>
+<instance part="SV3" gate="G$1" x="502.92" y="66.04" rot="R270"/>
+<instance part="GND57" gate="1" x="497.84" y="53.34"/>
+<instance part="+3V20" gate="G$1" x="500.38" y="48.26" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -18201,11 +18197,7 @@ MAX3223-MAX3243.pdf</description>
 <segment>
 <pinref part="SV3" gate="G$1" pin="1"/>
 <pinref part="GND57" gate="1" pin="GND"/>
-<wire x1="497.84" y1="66.04" x2="497.84" y2="63.5" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="C32" gate="G$1" pin="2"/>
-<pinref part="GND58" gate="1" pin="GND"/>
+<wire x1="497.84" y1="58.42" x2="497.84" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="VCC" class="0">
@@ -18562,7 +18554,7 @@ MAX3223-MAX3243.pdf</description>
 <segment>
 <pinref part="+3V20" gate="G$1" pin="+3V3"/>
 <pinref part="SV3" gate="G$1" pin="2"/>
-<wire x1="500.38" y1="58.42" x2="500.38" y2="66.04" width="0.1524" layer="91"/>
+<wire x1="500.38" y1="50.8" x2="500.38" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SCL" class="0">
@@ -19469,17 +19461,17 @@ MAX3223-MAX3243.pdf</description>
 <pinref part="U2" gate="A" pin="PB12"/>
 <pinref part="SV3" gate="G$1" pin="3"/>
 <wire x1="449.58" y1="40.64" x2="502.92" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="502.92" y1="40.64" x2="502.92" y2="66.04" width="0.1524" layer="91"/>
-<label x="515.62" y="48.26" size="1.778" layer="95"/>
+<wire x1="502.92" y1="40.64" x2="502.92" y2="58.42" width="0.1524" layer="91"/>
+<label x="515.62" y="40.64" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="CAM_CLK" class="0">
 <segment>
+<pinref part="U2" gate="A" pin="PB11"/>
 <pinref part="SV3" gate="G$1" pin="4"/>
-<wire x1="505.46" y1="50.8" x2="505.46" y2="66.04" width="0.1524" layer="91"/>
-<label x="515.62" y="50.8" size="1.778" layer="95"/>
-<pinref part="U2" gate="A" pin="PB8"/>
-<wire x1="449.58" y1="50.8" x2="505.46" y2="50.8" width="0.1524" layer="91"/>
+<wire x1="449.58" y1="43.18" x2="505.46" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="505.46" y1="43.18" x2="505.46" y2="58.42" width="0.1524" layer="91"/>
+<label x="515.62" y="43.18" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="CAM_SI" class="0">
@@ -19487,16 +19479,8 @@ MAX3223-MAX3243.pdf</description>
 <pinref part="U2" gate="A" pin="PB10"/>
 <pinref part="SV3" gate="G$1" pin="5"/>
 <wire x1="449.58" y1="45.72" x2="508" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="508" y1="45.72" x2="508" y2="66.04" width="0.1524" layer="91"/>
-<label x="515.62" y="53.34" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="N$14" class="0">
-<segment>
-<pinref part="U2" gate="A" pin="PB11"/>
-<pinref part="C32" gate="G$1" pin="1"/>
-<wire x1="449.58" y1="43.18" x2="474.98" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="474.98" y1="43.18" x2="474.98" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="508" y1="45.72" x2="508" y2="58.42" width="0.1524" layer="91"/>
+<label x="515.62" y="45.72" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
