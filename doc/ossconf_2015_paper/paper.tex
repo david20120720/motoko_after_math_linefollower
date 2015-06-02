@@ -44,7 +44,7 @@
 
 %.............................................. english title
 %          for shorts titles use command   \titleA{THE TITLE OF ARTICLE}
-\titleA[Klasifikácia žiadanej hodnoty Kohonenovou neurónovou sieťou]{Required value classification using Kohonen neural network}
+\titleA[Required value classification using Kohonen neural network]{Required value classification using Kohonen neural network}
 
 
 %............................. authors (first, second, ...) .. use next commands:
@@ -95,7 +95,7 @@ typi zákrut. Každá situácia má zodpovedajúci výstup, ktorý je vstupom do
 In this paper we describe situations classification using Kohonen neural network.
 Results are demonstrated on line following robot, where different curves are classificated.
 Each classificated situation have corresponding required value output,
-which go into low level controll process.
+which go into low level control process.
 Network weights estimating is processed in real time.
 \end{abstractA}
 
@@ -129,19 +129,19 @@ Network weights estimating is processed in real time.
 
 \section*{Introduction}
 
-Is well know, iterative learning controll can handle any repetitive controll
-process weel \cite{ilc1}, \cite{ilc2}. Most of aplications we can found in manipulators
-controll in industry.
+Is well know, iterative learning control can handle any repetitive control
+process well \cite{ilc1}, \cite{ilc2}. Most of applications we can found in manipulators
+control in industry.
 
 Some problems, have iterative (or semiterative) character, but more then one required
-output sequence is required. Consider problem of line following robot : to controll robot
-speed, is necessary to know curve shape. If we can compute asociative memory, where input is
+output sequence is required. Consider problem of line following robot : to control robot
+speed, is necessary to know curve shape. If we can compute associative memory, where input is
 line shape and output is required speed, we can handle this problem.
 
 \section{Problem formalisation}
 
-Consider two wheel (two motors) robot with diferential drive \cite{robot_model_1}. For motors
-controll signals we can write
+Consider two wheel (two motors) robot with differential drive \cite{robot_model_1}. For motors
+control signals we can write
 
 \begin{eqnarray}
 \begin{split}
@@ -152,10 +152,10 @@ controll signals we can write
 \end{eqnarray}
 
 Where \\
-$r(n)$ is right motor controll output \\
-$l(n)$ is left motor controll output \\
-$v(n)$ is common controll input \\
-$d(n)$ is difference controll input \\
+$r(n)$ is right motor control output \\
+$l(n)$ is left motor control output \\
+$v(n)$ is common control input \\
+$d(n)$ is difference control input \\
 \\
 $d(n)$ can be computed well using PD controller \cite{servo_pd}. Our goal
 is to properly estimate $d(n)$ which is speed of robot.
@@ -175,15 +175,15 @@ $\alpha$ is robot inertia constant, within $(0, 1)$ \\
 $b_0$ and $b_1$ are constants depending on wheel distances, wheel diameters, gear ratio, and
 maximum speed
 
-If required $\theta$ and $\nu$ are know, we can very well use pure PID controll defining error
+If required $\theta$ and $\nu$ are know, we can very well use pure PID control defining error
 as $e_{\theta}(n) = \theta_r(n) - \theta(n)$, $e_{\nu}(n) = \nu_r(n) - \nu(n)$,
-In our line following problem, is $\nu_r(n)$ uknow, value $\theta_r(n)$ $\theta_r(n)$ readed from
+In our line following problem, is $\nu_r(n)$ unknown, value $\theta_r(n)$ $\theta_r(n)$ readed from
 line position sensor. In fact, inertia of motors is much
-smaller than inertia of whole robot, for controll $\theta(n)$ we can still use PD
+smaller than inertia of whole robot, for control $\theta(n)$ we can still use PD
 controller, and required value let be $\theta_r(n) = 0$, which mean robot is straight on line.
 
-Our goal is to properly estimate $v(n)$ and controll robot speed, to give enough time
-for PD controll to setup $\theta(n)$. We are minimizing $e_{\theta}(n)$ and maximizing $\nu(n)$
+Our goal is to properly estimate $v(n)$ and control robot speed, to give enough time
+for PD control to setup $\theta(n)$. We are minimizing $e_{\theta}(n)$ and maximizing $\nu(n)$
 (corespoding to $v(n)$).
 
 
@@ -199,36 +199,36 @@ On figure \ref{fig:robot_controller} is block diagram of proposed controller.
     \label{fig:robot_controller}
 \end{figure}
 
-Input is line poistion from sensor $s(n)$. All values are normalised into
+Input is line position from sensor $s(n)$. All values are normalised into
 $\langle -1, 1 \rangle$.
 Required value of $\theta(n)$ is marked as
-$r(n)$. In simpplificated case, can be set to 0. Computed error is input into two
+$r(n)$. In simplification case, can be set to 0. Computed error is input into two
 PD controllers (PID in general, I-term is equal to zero, because \ref{robot_equation}
 ($\theta$ part) have pole on [1, 0]. If I-term is nonzero, there will be double pole on [1, 0] and
 system will be unstable).
 
-PD ontroller outputs are mixed using fuzzy mux, which works as
+PD controller outputs are mixed using fuzzy mux, which works as
 
 \begin{eqnarray}
 \begin{split}
 \label{fuzzy_mux}
-	d(n) &= s(n)a(n) + (1 - s(n))b(n)
+	d(n) &= s'(n)a(n) + (1 - s'(n))b(n)
 \end{split}
 \end{eqnarray}
 
 Where \\
 $a(n)$ is PID A output \\
 $b(n)$ is PID B output \\
-$s(n)$ is select input, from interval $\langle 0, 1 \rangle$ \\
+$s'(n)$ is select input, from interval $\langle 0, 1 \rangle$ \\
 
 Select output is produced by nonlinear low pass filtered signal of $e(n)$ as
 
 \begin{eqnarray}
 \begin{split}
 \label{low_pass}
-s(n) =
+s'(n) =
   \begin{cases}
-    s(n-1)k + (1 - k)|e(n)| & \text{if} |e(n)| < s(n-1) \\
+    s'(n-1)k + (1 - k)|e(n)| & \text{if} |e(n)| < s'(n-1) \\
     |e(n)| & else
   \end{cases}
 \end{split}
@@ -241,12 +241,12 @@ This system properly switching between two controllers, one for straight line
 one for curved line.
 
 To estimate $v(n)$ is Kohonen neural network used \cite{kohonen_neural_network}
- and iterative learning controll. Input into neural networ is vector of $s(n)$ values
+ and iterative learning control. Input into neural network is vector of $s(n)$ values
 (implemented as fifo, in experiments with size M = 16). Mark this vector as $S(n) =
 [s(n), ..., s(n - M)]$.
 
-Our goal, is to train network to clasification vectors $S(n)$. Depending on classes count,
-we choose coresponding neurons count $N$. In experiments chooses as 16. Which means, 16 different
+Our goal, is to train network to classification vectors $S(n)$. Depending on classes count,
+we choose corresponding neurons count $N$. In experiments chooses as 16. Which means, 16 different
 curves shapes can be recognized.
 
 J-th neuron transfer function can be written as
@@ -259,7 +259,7 @@ y_j(n) = \sum_{i = 0}^{M-1} {|s(n-i) - w_j(i)|}
 \end{eqnarray}
 
 Where $w_j$ are neuron weights, in initialization chosen randomly
- and modifieng during learning process.
+ and modifying during learning process.
 
 Neuron with less $y_q(n)$ will be marked as winning neuron, and weights modification
 will be processed as
@@ -322,12 +322,12 @@ few curves.
 
 \section{Conclusions}
 
-In paper was describen learning system for curve shape recognition using Kohonen
-neural network. Neural network result have coresponding speed output which controll
+In paper was described learning system for curve shape recognition using Kohonen
+neural network. Neural network result have corresponding speed output which control
 robot optional speed. Learning process is working in real time,
 on 75MHz ARM Cortex M4F microcontroller. Robot is on figure \ref{fig:robot}.
 Robot working video can be shown on \cite{robot_video}. More pictures are
-availible on authors blog and sources on github \cite{blog_git}.
+available on authors blog and sources on github \cite{blog_git}.
 
 \begin{figure}[]
     \centering
@@ -343,7 +343,7 @@ availible on authors blog and sources on github \cite{blog_git}.
 \begin{thebibliography}{99}
 
 \bibitem{ilc1}
-Kevin L. Moore: Iterative learning controll
+Kevin L. Moore: Iterative learning control
 \url{http://inside.mines.edu/~kmoore/survey.pdf}.
 
 \bibitem{ilc2}
