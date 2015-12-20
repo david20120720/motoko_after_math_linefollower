@@ -52,12 +52,12 @@ void line_follower_main()
 
 	//float ks = 0.007;
 	//float ks = 0.008;
-	float ks = 0.01;
+	float ks = 0.02;
 
 
 
 	g_line_follower.base_speed_ = m_min(g_line_follower.base_speed_ + tmp*ks, tmp);
-	g_line_follower.base_speed_ = m_saturate(g_line_follower.base_speed_, 0.4, 0.9*g_line_follower.base_speed);
+	g_line_follower.base_speed_ = m_saturate(g_line_follower.base_speed_, 0.4, 1.5*g_line_follower.base_speed);
 
 
 	//g_line_follower.base_speed_ = 0.4;
