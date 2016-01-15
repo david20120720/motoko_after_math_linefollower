@@ -5,6 +5,7 @@
 
 
 void sensor_test();
+void line_sensor_test();
 
 
 #endif

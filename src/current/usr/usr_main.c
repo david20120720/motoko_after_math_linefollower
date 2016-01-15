@@ -1,8 +1,11 @@
 #include "usr_main.h"
 
 #include "../lib_usr/line_sensor.h"
-#include "../lib_usr/imu.h"
+#include "../lib_usr/lsm9ds0.h"
+#include "../lib_usr/l3g4200.h"
+#include "../lib_usr/hmc5883.h"
 #include "../lib_usr/camera.h"
+
 #include "../lib_usr/math.h"
 
 #include "line_follower.h"
@@ -31,16 +34,36 @@ void line_sensor_thread()
 
 void i2c_sensor_thread()
 {
-	imu_init();
-	camera_init();
+	#ifdef USE_LSM9DS0
+	lsm9ds0_init();					/*IMU*/
+	#endif
+
+	#ifdef USE_L3G4200
+	l3g4200_init();					/*gyro*/
+	#endif
+
+	#ifdef USE_HMC5883
+	hmc5883_init();					/*compass*/
+	#endif
+
 
  	event_timer_set_period(EVENT_TIMER_1_ID, I2C_SAMPLIG_PERIOD);
 
  	while (1)
  	{
  		event_timer_wait(EVENT_TIMER_1_ID);
- 		imu_read();
- 		camera_read();
+
+		#ifdef USE_LSM9DS0
+ 		lsm9ds0_read();
+		#endif
+
+		#ifdef USE_L3G4200
+		l3g4200_read();
+		#endif
+
+		#ifdef USE_HMC5883
+		hmc5883_read();
+		#endif
  	}
 }
 
@@ -76,17 +99,72 @@ void line_follower()
 	}
 }
 
+
+void motor_test()
+{
+	drv8834_run(30, 30);
+	timer_delay_ms(1000);
+
+	drv8834_run(-30, -30);
+	timer_delay_ms(1000);
+
+	drv8834_run(0, 0);
+	timer_delay_ms(1000);
+
+	while (1)
+	{
+		led_on(LED_0);
+    timer_delay_ms(100);
+
+    led_off(LED_0);
+    timer_delay_ms(200);
+	}
+}
+
+
+i32 abs_(i32 x)
+{
+	if (x < 0)
+		return -x;
+
+	return x;
+}
+
+void motor_rotation(i32 angle)
+{
+	i32 gyro_angle = 0;
+
+	i32 speed = 0;
+
+	while (abs_(gyro_angle) < abs_(angle))
+	{
+		if (angle > 0)
+			drv8834_run(speed/10, -speed/10);
+		else
+			drv8834_run(-speed/10, speed/10);
+
+		if (speed < 300)
+			speed+=1;
+
+		gyro_angle+= g_l3g4200.gz;
+		timer_delay_ms(I2C_SAMPLIG_PERIOD);
+	}
+
+	drv8834_run(0, 0);
+	timer_delay_ms(100);
+}
+
+
 void main_thread()
 {
 	printf_(OS_WELCOME_MESSAGE);
+
 	create_thread(line_sensor_thread, line_sensor_thread_stack, sizeof(line_sensor_thread_stack), PRIORITY_MAX);
 	create_thread(i2c_sensor_thread, i2c_sensor_thread_stack, sizeof(i2c_sensor_thread_stack), PRIORITY_MAX);
 
 
-	drv8834_run(0, 0);
 
-
-	//sensor_test();
+	// sensor_test();
 
 	broken_line_init();
 	obstacle_init();
@@ -96,15 +174,28 @@ void main_thread()
 		if (get_key() != 0)
 		{
 			timer_delay_ms(1000);
-			line_follower();
+			//line_follower();
+			//motor_test();
+			i32 angle = 250000;
+
+
+			motor_rotation(angle);
+			motor_rotation(-angle);
+			motor_rotation(angle);
+			motor_rotation(angle);
+			motor_rotation(angle);
+			motor_rotation(angle);
+
+			motor_rotation(-angle);
+			motor_rotation(-angle);
+			motor_rotation(-angle);
+			motor_rotation(-angle);
 		}
 
-
-
 		led_on(LED_0);
-        timer_delay_ms(100);
+    timer_delay_ms(100);
 
-        led_off(LED_0);
-       	timer_delay_ms(200);
+    led_off(LED_0);
+    timer_delay_ms(200);
 	}
 }
