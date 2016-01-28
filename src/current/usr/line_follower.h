@@ -3,6 +3,7 @@
 
 #include "../os/suzuha_os.h"
 #include "pid.h"
+#include "robot_config.h"
 
 
 struct sLineFollower

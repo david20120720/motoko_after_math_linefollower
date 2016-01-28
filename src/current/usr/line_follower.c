@@ -9,16 +9,15 @@ struct sPID g_line_pid;
 
 void line_follower_init()
 {
-	g_line_follower.base_speed = 0.5;
-	g_line_follower.base_speed_max = 0.7;
-
+	g_line_follower.base_speed = CONFIG_SPEED_BASE;
+	g_line_follower.base_speed_max = CONFIG_SPEED_MAX;
 	g_line_follower.dif_speed = 0.0;
 
 
-	float kp = 0.326;
-	float ki = 0.0;
-	float kd = 10.53;
-	float kd2 = 0.0;
+	float kp = CONFIG_KP;
+	float ki = CONFIG_KI;
+	float kd = CONFIG_KD;
+	float kd2 = CONFIG_KD2;
 
 	pid_init(&g_line_pid, SPEED_MAX, kp, ki, kd, kd2);
 
@@ -30,24 +29,22 @@ void line_follower_main()
 {
 	float line_position = (1.0*g_line_sensor.line_position)/LINE_MAX;
 
-	float reward = (1.0 - line_position) + 0.3*g_line_follower.base_speed;
-	float predictor_output = q_predictor_process(line_position, reward);
-
-
 	float error = 0.0 - line_position;
 	g_line_follower.dif_speed = pid_process(&g_line_pid, error);
 
+	#if CONFIG_USE_PREDICTOR == 1
+	g_line_follower.base_speed_max = q_predictor_process(line_position, CONFIG_SPEED_MIN, CONFIG_SPEED_MAX);
+	#else
+	g_line_follower.base_speed_max = CONFIG_SPEED_MAX;
+	#endif
 
-	g_line_follower.base_speed_max = predictor_output;
-	float tmp = 1.0 - m_abs(line_position);
-
-	tmp+= 0.00001*predictor_output;
-
-	float ks = 0.02;
-
-	g_line_follower.base_speed = m_min(g_line_follower.base_speed + ks*tmp, tmp);
-	g_line_follower.base_speed = m_saturate(g_line_follower.base_speed, 0.5, g_line_follower.base_speed_max);
-
+	#if CONFIG_USE_RAMP_SPEED == 1
+	float ks = CONFIG_KS;
+	g_line_follower.base_speed = m_min(g_line_follower.base_speed + ks*(1.0 - line_position), (1.0 - line_position));
+	g_line_follower.base_speed = m_saturate(g_line_follower.base_speed, CONFIG_SPEED_MIN, g_line_follower.base_speed_max);
+	#else
+	g_line_follower.base_speed = CONFIG_SPEED_BASE;
+	#endif
 
 	i32 motor_right = (g_line_follower.base_speed - g_line_follower.dif_speed)*SPEED_MAX;
 	i32 motor_left = (g_line_follower.base_speed + g_line_follower.dif_speed)*SPEED_MAX;

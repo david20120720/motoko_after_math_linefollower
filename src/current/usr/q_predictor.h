@@ -2,6 +2,7 @@
 #define _Q_PREDICTOR_H_
 
 #include "../os/suzuha_os.h"
+#include "robot_config.h"
 
 #define Q_PREDICTOR_MODEL_SIZE		(u32)16
 #define Q_PREDICTOR_MODELS_COUNT	(u32)16
@@ -19,8 +20,7 @@ struct sQPredictor
 struct sQPredictor g_q_predictor;
 
 void q_predictor_init();
-float q_predictor_process(float input, float reward);
+float q_predictor_process(float input, float output_min, float output_max);
 void q_predictor_print();
-
 
 #endif

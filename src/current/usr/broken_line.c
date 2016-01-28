@@ -3,26 +3,26 @@
 
 #include "../lib_usr/math.h"
 
+#define LINE_SEARCH_TIME_DT		5
+
 void broken_line_init()
 {
 
 }
-
-
-#define LINE_SEARCH_TIME 	130
-#define LINE_SEARCH_SPEED 	(i32)50
 
 void broken_line_main()
 {
 	i32 motor_right = 0, motor_left = 0;
 
 	u32 state = 0;
-	u32 cnt = 0;
+	i32 cnt = 0;
 
-	while ( (g_line_sensor.on_line != IR_ON_LINE) ) //|| (m_abs(g_line_sensor.line_position) > (LINE_MAX*40.0)/100.0) )
+	i32 tmp = 0;
+
+	while (g_line_sensor.on_line != IR_ON_LINE)
 	{
-		timer_delay_ms(5);
- 
+		timer_delay_ms(LINE_SEARCH_TIME_DT);
+
 		switch (state)
 		{
 			case 0:
@@ -31,15 +31,15 @@ void broken_line_main()
 						if (g_line_sensor.line_position > 0)
 						{
 							motor_left = (0*SPEED_MAX)/100;
-							motor_right = (LINE_SEARCH_SPEED*SPEED_MAX)/100;
+							motor_right = (CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
 						}
-						else  
+						else
 						{
-							motor_left = (LINE_SEARCH_SPEED*SPEED_MAX)/100;
+							motor_left = (CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
 							motor_right = (0*SPEED_MAX)/100;
-						} 
+						}
 
-						cnt = LINE_SEARCH_TIME;
+						cnt = CONFIG_LINE_SEARCH_TIME/LINE_SEARCH_TIME_DT;
 						state = 1;
 					}
 					else
@@ -52,35 +52,36 @@ void broken_line_main()
 						if (g_line_sensor.line_position > 0)
 						{
 							motor_left = (0*SPEED_MAX)/100;
-							motor_right = -(LINE_SEARCH_SPEED*SPEED_MAX)/100;
+							motor_right = -(CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
 						}
-						else  
+						else
 						{
-							motor_left = -(LINE_SEARCH_SPEED*SPEED_MAX)/100;
+							motor_left = -(CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
 							motor_right = (0*SPEED_MAX)/100;
-						} 
+						}
 
-						cnt = LINE_SEARCH_TIME;
+						cnt = CONFIG_LINE_SEARCH_TIME/LINE_SEARCH_TIME_DT;
 						state = 2;
 					}
 					else
 						cnt--;
+					break;
 
 			case 2:
 					if (cnt == 0)
 					{
 						if (g_line_sensor.line_position > 0)
 						{
-							motor_left = (LINE_SEARCH_SPEED*SPEED_MAX)/100;
+							motor_left = (CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
 							motor_right = (0*SPEED_MAX)/100;
 						}
-						else  
+						else
 						{
 							motor_left = (0*SPEED_MAX)/100;
-							motor_right = (LINE_SEARCH_SPEED*SPEED_MAX)/100;
-						} 
+							motor_right = (CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
+						}
 
-						cnt = LINE_SEARCH_TIME;
+						cnt = CONFIG_LINE_SEARCH_TIME/LINE_SEARCH_TIME_DT;
 						state = 3;
 					}
 					else
@@ -92,34 +93,34 @@ void broken_line_main()
 					{
 						if (g_line_sensor.line_position > 0)
 						{
-							motor_left = -(LINE_SEARCH_SPEED*SPEED_MAX)/100;
+							motor_left = -(CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
 							motor_right = (0*SPEED_MAX)/100;
 						}
-						else  
+						else
 						{
 							motor_left = (0*SPEED_MAX)/100;
-							motor_right = (LINE_SEARCH_SPEED*SPEED_MAX)/100;
-						} 
+							motor_right = -(CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
+						}
 
-						cnt = LINE_SEARCH_TIME;
+						cnt = CONFIG_LINE_SEARCH_TIME/LINE_SEARCH_TIME_DT;
 						state = 4;
 					}
 					else
 						cnt--;
+					break;
 
 			case 4:
 					if (cnt == 0)
 					{
 						motor_left = 0;
 						motor_right = 0;
-						
 
-						cnt = LINE_SEARCH_TIME/2;
+						cnt = CONFIG_LINE_SEARCH_TIME/(2*LINE_SEARCH_TIME_DT);
+						tmp = 0;
 						state = 5;
 					}
 					else
 						cnt--;
-
 					break;
 
 			case 5:
@@ -130,21 +131,20 @@ void broken_line_main()
 					}
 					else
 					{
-						if (motor_left < (40*SPEED_MAX)/100)
-							motor_left++;
+						if (tmp < (CONFIG_LINE_SEARCH_SPEED*SPEED_MAX))
+							tmp+=50;
 
-						if (motor_right < (40*SPEED_MAX)/100)
-							motor_right++;
-						
+						motor_left = tmp/SPEED_MAX;
+						motor_right = tmp/SPEED_MAX;
+
 						cnt--;
 					}
 					break;
 		}
-		//motor_left = 0;
-		//motor_right = 0;
-		drv8834_run(motor_left, motor_right); 
+
+		drv8834_run(motor_left, motor_right);
 	}
 
 
-	drv8834_run(0, 0); 
+	drv8834_run(0, 0);
 }

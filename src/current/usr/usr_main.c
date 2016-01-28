@@ -14,13 +14,24 @@
 #include "q_predictor.h"
 
 #include "test.h"
+#include "error.h"
 
 #define SAMPLIG_PERIOD		(u32)4
-#define I2C_SAMPLIG_PERIOD	(u32)20
+#define I2C_SAMPLIG_PERIOD	(u32)10
+
+volatile u32 g_error ;
+
 
 void line_sensor_thread()
 {
-	line_sensor_init();
+	timer_delay_ms(100);
+	u32 init_res = line_sensor_init();
+
+	if (init_res != 0)
+	{
+		g_error = 1;
+		abort_error_(ERROR_LINE_SENSOR, init_res);
+	}
 
  	event_timer_set_period(EVENT_TIMER_0_ID, SAMPLIG_PERIOD);
 
@@ -35,7 +46,12 @@ void line_sensor_thread()
 void i2c_sensor_thread()
 {
 	#ifdef USE_LSM9DS0
-	lsm9ds0_init();					/*IMU*/
+	u32 init_res = lsm9ds0_init();					/*IMU*/
+	if (init_res != 0)
+	{
+		g_error = 1;
+		abort_error_(ERROR_IMU, init_res);
+	}
 	#endif
 
 	#ifdef USE_L3G4200
@@ -110,42 +126,38 @@ void main_thread()
 {
 	printf_(OS_WELCOME_MESSAGE);
 
+	timer_delay_ms(200);
+
+	g_error = 0;
+
 	create_thread(line_sensor_thread, line_sensor_thread_stack, sizeof(line_sensor_thread_stack), PRIORITY_MAX);
 	create_thread(i2c_sensor_thread, i2c_sensor_thread_stack, sizeof(i2c_sensor_thread_stack), PRIORITY_MAX);
 
-
-
-	// sensor_test();
 
 	broken_line_init();
 	obstacle_init();
 
 	while (1)
 	{
+		if (g_error != 0)
+		{
+			while (1)
+			{
+				printf_("system aborted\n");
+				timer_delay_ms(2000);
+			}
+		}
+
+
 		if (get_key() != 0)
 		{
 			timer_delay_ms(1000);
 
-			rotation_test();
-			//line_follower();
-
-			/*
-			q_predictor_init();
-			while (1)
-			{
-				q_predictor_print();
-
-				led_on(LED_0);
-				timer_delay_ms(100);
-
-				led_off(LED_0);
-				timer_delay_ms(200);
-			}
-			*/
+			line_follower();
+			 //sensor_test();
+			//rotation_test();
+			//imu_test();
 		}
-
-		q_predictor_print();
-
 
 		led_on(LED_0);
     timer_delay_ms(100);

@@ -35,7 +35,7 @@ struct sRGBSensor g_rgb;
 #define RGB_SDA_8     	0
 
 /*this on GPIOA*/
-#define RGB_SCL     	8 
+#define RGB_SCL     	8
 
 /*APDS-9950 RGB sensor*/
 #define RGB_ADDRESS		(0x39<<1)
@@ -63,6 +63,7 @@ struct sRGBSensor g_rgb;
 
 #define RGB_CONTROL			0x0F
 #define RGB_ID				0x12
+#define RGB_ID_VALUE				0x69
 
 #define RGB_STATUS 			0x13
 
@@ -78,8 +79,11 @@ struct sRGBSensor g_rgb;
 #define RGB_PDATAH 			0x1D
 
 
+void rgb_i2c_write_reg(u8 dev_adr, u8 reg_adr, u8 value);
+void rgb_i2c_read_reg(u8 dev_adr, u8 reg_adr, u8 *res);
 
 void rgb_init();
+
 void rgb_read();
 
 #endif

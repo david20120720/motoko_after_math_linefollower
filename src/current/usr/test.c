@@ -4,6 +4,7 @@
 #include "../lib_usr/l3g4200.h"
 #include "../lib_usr/hmc5883.h"
 #include "../lib_usr/camera.h"
+#include "../lib_usr/math.h"
 
 #include "line_follower.h"
 #include "broken_line.h"
@@ -52,7 +53,7 @@ void sensor_test()
 		led_off(LED_0);
 
 
-		timer_delay_ms(100);
+		timer_delay_ms(200);
 	}
 }
 
@@ -106,39 +107,76 @@ void motor_test()
 
 	drv8834_run(0, 0);
 	timer_delay_ms(1000);
-
-	while (1)
-	{
-		led_on(LED_0);
-    timer_delay_ms(100);
-
-    led_off(LED_0);
-    timer_delay_ms(200);
-	}
 }
 
 void rotation_test()
 {
-	u32 i;
 	i32 angle = 90;
 
-	/*
-	rotate_robot(angle);
-	rotate_robot(angle);
-	rotate_robot(angle);
-	rotate_robot(angle);
-
-	rotate_robot(-angle);
-	rotate_robot(-angle);
-	rotate_robot(-angle);
-	rotate_robot(-angle);
-	*/
-
-	rotate_robot(-90);
-	rotate_robot(-90);
+	obstacle_rotate_robot(-angle);
+	obstacle_rotate_robot(-angle);
 
 	timer_delay_ms(500);
 
-	rotate_robot(90);
-	rotate_robot(90);
+	obstacle_rotate_robot(angle);
+	obstacle_rotate_robot(angle);
+
+	timer_delay_ms(500);
+}
+
+
+void imu_test()
+{
+	float roll = 0.0;
+	float pitch = 0.0;
+	float yaw = 0.0, yaw_ofs = 0.0;;
+
+	u32 dt = 10;
+
+	u32 i, max = 100;
+	for (i = 0; i < max; i++)
+	{
+		yaw_ofs+= g_lsm9ds0_imu.gz;
+		timer_delay_ms(dt);
+	}
+
+	yaw_ofs/= max;
+
+	while (1)
+	{
+		led_on(LED_0);
+
+		roll = m_atan2(g_lsm9ds0_imu.ay, m_sqrt(g_lsm9ds0_imu.ax*g_lsm9ds0_imu.ax + g_lsm9ds0_imu.az*g_lsm9ds0_imu.az));
+		pitch = m_atan2(g_lsm9ds0_imu.ax, m_sqrt(g_lsm9ds0_imu.ay*g_lsm9ds0_imu.ay + g_lsm9ds0_imu.az*g_lsm9ds0_imu.az));
+		yaw+= (g_lsm9ds0_imu.gz - yaw_ofs)*(dt/1000.0)*0.0003; //*(90.0/272063.0);
+
+		printf_("%i %i %i\n", (i32)(roll*180.0/PI_), (i32)(pitch*180.0/PI_), (i32)(yaw*180.0/PI_) );
+
+		led_off(LED_0);
+
+		timer_delay_ms(dt);
+	}
+}
+
+void camera_test()
+{
+	camera_init();
+
+	while (1)
+	{
+		led_on(LED_0);
+
+		u32 timer_start = timer_get_time();
+		camera_read();
+		u32 timer_stop = timer_get_time();
+
+		u32 i;
+		for (i = 0; i < LINE_CAMERA_PIXELS_COUNT; i++)
+				printf_("%i", g_camera.pixels[i]);
+		printf_(" > %i %i %i %u\n", g_camera.flag, g_camera.average, g_camera.line_position, timer_stop - timer_start);
+		//printf_("line %i  time %u\n", g_camera.line_position, timer_stop - timer_start);
+		led_off(LED_0);
+
+		timer_delay_ms(200);
+	}
 }

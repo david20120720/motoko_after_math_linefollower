@@ -1,21 +1,24 @@
 #include "rgb_i2c.h"
- 
+
 #define RGB_I2C_DELAY_LOOPS 1
+
+u8 rgb_raw[RGB_SENSORS_COUNT];
+
 
 void rgb_i2c_delay()
 {
     u32 loops = RGB_I2C_DELAY_LOOPS;
     while (loops--)
-        __asm("nop"); 
-} 
+        __asm("nop");
+}
 
 u16 g_rgb_all_mask;
- 
-void RGBSetLowSDA() 
+
+void RGBSetLowSDA()
 {
     GPIO_InitTypeDef GPIO_InitStruct;
 
-    GPIO_InitStruct.GPIO_Pin = g_rgb_all_mask&((1<<RGB_SDA_0)|(1<<RGB_SDA_1)|(1<<RGB_SDA_2)|(1<<RGB_SDA_3)|(1<<RGB_SDA_4)|(1<<RGB_SDA_5)|(1<<RGB_SDA_6)|(1<<RGB_SDA_7)); 
+    GPIO_InitStruct.GPIO_Pin = g_rgb_all_mask&((1<<RGB_SDA_0)|(1<<RGB_SDA_1)|(1<<RGB_SDA_2)|(1<<RGB_SDA_3)|(1<<RGB_SDA_4)|(1<<RGB_SDA_5)|(1<<RGB_SDA_6)|(1<<RGB_SDA_7));
 
     GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
     GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;//this sets the GPIO modules clock speed
@@ -40,13 +43,13 @@ void RGBSetLowSDA()
 
 
     rgb_i2c_delay();
-} 
+}
 
-void RGBSetHighSDA() 
-{    
-    GPIO_InitTypeDef GPIO_InitStruct; 
+void RGBSetHighSDA()
+{
+    GPIO_InitTypeDef GPIO_InitStruct;
 
-    GPIO_InitStruct.GPIO_Pin = g_rgb_all_mask&((1<<RGB_SDA_0)|(1<<RGB_SDA_1)|(1<<RGB_SDA_2)|(1<<RGB_SDA_3)|(1<<RGB_SDA_4)|(1<<RGB_SDA_5)|(1<<RGB_SDA_6)|(1<<RGB_SDA_7)); 
+    GPIO_InitStruct.GPIO_Pin = g_rgb_all_mask&((1<<RGB_SDA_0)|(1<<RGB_SDA_1)|(1<<RGB_SDA_2)|(1<<RGB_SDA_3)|(1<<RGB_SDA_4)|(1<<RGB_SDA_5)|(1<<RGB_SDA_6)|(1<<RGB_SDA_7));
 
     GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;//this sets the GPIO modules clock speed
@@ -69,15 +72,15 @@ void RGBSetHighSDA()
     GPIOB->BSRR = (1<<RGB_SDA_8);
     //GPIO_SetBits(GPIOB, (1<<RGB_SDA_8));
 
-    rgb_i2c_delay(); 
-} 
+    rgb_i2c_delay();
+}
 
-void RGBSetLowSCL() 
-{   
+void RGBSetLowSCL()
+{
     GPIOA->BRR = 1<<RGB_SCL;
     // GPIO_ResetBits(GPIOA, 1<<RGB_SCL);
     rgb_i2c_delay();
-} 
+}
 
 void RGBSetHighSCL()
 {
@@ -89,17 +92,17 @@ void RGBSetHighSCL()
 void rgb_i2c_init()
 {
     GPIO_InitTypeDef GPIO_InitStruct;
-    
-    GPIO_InitStruct.GPIO_Pin = (1<<RGB_SCL); 
+
+    GPIO_InitStruct.GPIO_Pin = (1<<RGB_SCL);
     GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
     GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;//this sets the GPIO modules clock speed
     GPIO_InitStruct.GPIO_OType = GPIO_OType_PP; // this sets the pin type to open drain
     GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL; // this disables resistor
- 
+
     GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 
-    GPIO_InitStruct.GPIO_Pin = g_rgb_all_mask&((1<<RGB_SDA_0)|(1<<RGB_SDA_1)|(1<<RGB_SDA_2)|(1<<RGB_SDA_3)|(1<<RGB_SDA_4)|(1<<RGB_SDA_5)|(1<<RGB_SDA_6)|(1<<RGB_SDA_7)); 
+    GPIO_InitStruct.GPIO_Pin = g_rgb_all_mask&((1<<RGB_SDA_0)|(1<<RGB_SDA_1)|(1<<RGB_SDA_2)|(1<<RGB_SDA_3)|(1<<RGB_SDA_4)|(1<<RGB_SDA_5)|(1<<RGB_SDA_6)|(1<<RGB_SDA_7));
 
     GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;//this sets the GPIO modules clock speed
@@ -115,12 +118,12 @@ void rgb_i2c_init()
     GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;//this sets the GPIO modules clock speed
     GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL; // this disables resistor
     GPIO_Init(GPIOB, &GPIO_InitStruct);
-    
+
     GPIO_SetBits(GPIOB, (1<<RGB_SDA_8));
 
 
     RGBSetHighSCL();
-    RGBSetLowSDA(); 
+    RGBSetLowSDA();
     RGBSetHighSDA();
 }
 
@@ -140,7 +143,7 @@ void rgb_i2cStart()
 
 
 void rgb_i2cStop()
-{ 
+{
     RGBSetLowSCL();
     RGBSetLowSDA();
 
@@ -160,8 +163,8 @@ void rgb_i2cWrite(u8 a)
     for (i=0; i<8; i++)
     {
         RGBSetLowSCL();
-    
-        if (a & 0x80)          
+
+        if (a & 0x80)
             RGBSetHighSDA();
         else
             RGBSetLowSDA();
@@ -173,7 +176,7 @@ void rgb_i2cWrite(u8 a)
     RGBSetLowSCL();
     RGBSetHighSDA();
     RGBSetHighSCL();
-   
+
     RGBSetLowSCL();
 
     rgb_i2c_delay();
@@ -188,7 +191,7 @@ void rgb_i2cRead(u8 ack, u8 *result)
     	result[i] = 0x00;
 
     RGBSetLowSCL();
-    RGBSetHighSDA(); 
+    RGBSetHighSDA();
 
     for (i = 0; i < 8; i++)
     {
@@ -198,12 +201,12 @@ void rgb_i2cRead(u8 ack, u8 *result)
         RGBSetHighSCL();
 
         u32 tmp = GPIOA->IDR;
-        
+
         if (tmp&(1<<RGB_SDA_0))
             result[0]|= 1;
 
         if (tmp&(1<<RGB_SDA_1))
-            result[1]|= 1; 
+            result[1]|= 1;
 
         if (tmp&(1<<RGB_SDA_2))
             result[2]|= 1;
@@ -218,11 +221,11 @@ void rgb_i2cRead(u8 ack, u8 *result)
             result[5]|= 1;
 
         if (tmp&(1<<RGB_SDA_6))
-            result[6]|= 1; 
+            result[6]|= 1;
 
         if (tmp&(1<<RGB_SDA_7))
-            result[7]|= 1; 
-        
+            result[7]|= 1;
+
         if (GPIOB->IDR&(1<<RGB_SDA_8))
             result[8]|= 1;
 
@@ -230,17 +233,17 @@ void rgb_i2cRead(u8 ack, u8 *result)
     }
 
     if (ack)
-    {                          
+    {
         RGBSetLowSDA();
     }
-    
+
     RGBSetHighSCL();
     RGBSetLowSCL();
 
     rgb_i2c_delay();
 }
 
- 
+
 void rgb_i2c_write_reg(u8 dev_adr, u8 reg_adr, u8 value)
 {
     rgb_i2cStart();
@@ -248,19 +251,19 @@ void rgb_i2c_write_reg(u8 dev_adr, u8 reg_adr, u8 value)
     rgb_i2cWrite(reg_adr);  /*send reg address*/
     rgb_i2cWrite(value);
     rgb_i2cStop();
-} 
+}
 
 void rgb_i2c_read_reg(u8 dev_adr, u8 reg_adr, u8 *res)
-{  
+{
     rgb_i2cStart();
     rgb_i2cWrite(dev_adr);  /*slave address, write command*/
     rgb_i2cWrite(reg_adr);  /*send reg address*/
-    
+
     rgb_i2cStart();
     rgb_i2cWrite(dev_adr|0x01); /*slave address, read command*/
     rgb_i2cRead(0, res);   /*read data*/
     rgb_i2cStop();
-} 
+}
 
 
 void rgb_init()
@@ -276,7 +279,7 @@ void rgb_init()
 		g_rgb.proximity[i] = 0x00;
 		g_rgb.ambient[i] = 0x00;
 	}
-	
+
     g_rgb_all_mask = 0xffff;
 
 	rgb_i2c_init();
@@ -293,9 +296,9 @@ void rgb_init()
 		100mA LED current
 		use IR diode
 		60x GAIN
-	*/ 
+	*/
 	rgb_i2c_write_reg(RGB_ADDRESS, RGB_COMMAND|RGB_CONTROL, (1<<5)|(1<<0)|(1<<1));
- 
+
 
     /*proximity enable*/
     RGBSetHighSDA();
@@ -306,136 +309,135 @@ void rgb_init()
     g_rgb_all_mask = 0xffff;
 
 }
- 
 
-u8 rgb_raw[RGB_SENSORS_COUNT];
+
 
 void rgb_read()
 {
 	u32 i, r;
 
     rgb_i2cStart();
-    rgb_i2cWrite(RGB_ADDRESS);  
-    rgb_i2cWrite(RGB_COMMAND|RGB_CDATAL|(1<<5));  
-        
-    rgb_i2cStart();
-    rgb_i2cWrite(RGB_ADDRESS|0x01);  
+    rgb_i2cWrite(RGB_ADDRESS);
+    rgb_i2cWrite(RGB_COMMAND|RGB_CDATAL|(1<<5));
 
-    rgb_i2cRead(1, rgb_raw); 
+    rgb_i2cStart();
+    rgb_i2cWrite(RGB_ADDRESS|0x01);
+
+    rgb_i2cRead(1, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.ambient[i] = rgb_raw[i];
 
-    rgb_i2cRead(1, rgb_raw); 
+    rgb_i2cRead(1, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.ambient[i]|= ((u16)rgb_raw[i])<<8;
-    
-    rgb_i2cRead(1, rgb_raw); 
+
+    rgb_i2cRead(1, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.r[i] = rgb_raw[i];
 
-    rgb_i2cRead(1, rgb_raw); 
+    rgb_i2cRead(1, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.r[i]|= ((u16)rgb_raw[i])<<8;
-    
 
-    rgb_i2cRead(1, rgb_raw); 
+
+    rgb_i2cRead(1, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.g[i] = rgb_raw[i];
 
-    rgb_i2cRead(1, rgb_raw); 
+    rgb_i2cRead(1, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.g[i]|= ((u16)rgb_raw[i])<<8;
-        
 
-    rgb_i2cRead(1, rgb_raw); 
+
+    rgb_i2cRead(1, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.b[i] = rgb_raw[i];
 
-    rgb_i2cRead(1, rgb_raw); 
+    rgb_i2cRead(1, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.b[i]|= ((u16)rgb_raw[i])<<8;
-    
 
-    rgb_i2cRead(1, rgb_raw); 
+
+    rgb_i2cRead(1, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.proximity[i] = rgb_raw[i];
 
-    rgb_i2cRead(0, rgb_raw); 
+    rgb_i2cRead(0, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.proximity[i]|= ((u16)rgb_raw[i])<<8;
 
     rgb_i2cStop();
-     
+
     /*
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         printf_("%i ",  g_rgb.ambient[i]);
     printf_("\n");
-    
+
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         printf_("%i ",  g_rgb.r[i]);
     printf_("\n");
-    
+
 
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         printf_("%i ",  g_rgb.g[i]);
     printf_("\n");
-    
+
 
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         printf_("%i ",  g_rgb.b[i]);
     printf_("\n");
-    
+
 
     printf_("\n\n");
     return;
-    
+
     rgb_i2c_read_reg(RGB_ADDRESS, RGB_COMMAND|RGB_CDATAL, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.ambient[i] = rgb_raw[i];
 
     rgb_i2c_read_reg(RGB_ADDRESS, RGB_COMMAND|RGB_CDATAH, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.ambient[i]|= ((u16)rgb_raw[i])<<8; 
+        g_rgb.ambient[i]|= ((u16)rgb_raw[i])<<8;
 
 
     rgb_i2c_read_reg(RGB_ADDRESS, RGB_COMMAND|RGB_RDATAL, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.r[i] = rgb_raw[i];
 
- 
+
     rgb_i2c_read_reg(RGB_ADDRESS, RGB_COMMAND|RGB_RDATAH, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.r[i]|= ((u16)rgb_raw[i])<<8; 
+        g_rgb.r[i]|= ((u16)rgb_raw[i])<<8;
 
 
     rgb_i2c_read_reg(RGB_ADDRESS, RGB_COMMAND|RGB_GDATAL, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.g[i] = rgb_raw[i];
 
- 
+
     rgb_i2c_read_reg(RGB_ADDRESS, RGB_COMMAND|RGB_GDATAH, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.g[i]|= ((u16)rgb_raw[i])<<8; 
+        g_rgb.g[i]|= ((u16)rgb_raw[i])<<8;
 
 
     rgb_i2c_read_reg(RGB_ADDRESS, RGB_COMMAND|RGB_BDATAL, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.b[i] = rgb_raw[i];
 
- 
+
     rgb_i2c_read_reg(RGB_ADDRESS, RGB_COMMAND|RGB_BDATAH, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.b[i]|= ((u16)rgb_raw[i])<<8; 
+        g_rgb.b[i]|= ((u16)rgb_raw[i])<<8;
 
 
     rgb_i2c_read_reg(RGB_ADDRESS, RGB_COMMAND|RGB_PDATAL, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
         g_rgb.proximity[i] = rgb_raw[i];
 
- 
+
     rgb_i2c_read_reg(RGB_ADDRESS, RGB_COMMAND|RGB_PDATAH, rgb_raw);
     for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.proximity[i]|= ((u16)rgb_raw[i])<<8; 
+        g_rgb.proximity[i]|= ((u16)rgb_raw[i])<<8;
 
 
     for (i = 0; i < RGB_SENSORS_COUNT; i++)

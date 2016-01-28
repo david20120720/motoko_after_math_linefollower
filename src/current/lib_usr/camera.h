@@ -3,24 +3,30 @@
 
 #include "../device/device.h"
 
-#define CAMERA_ADDRESS 				0xF0
+#define LINE_CAMERA_AO	 		(1<<12)		/*PB12*/
+#define LINE_CAMERA_A_CH    (ADC_Channel_3)				/*ADC4 channel 3*/
 
-#define CAMERA_STATE 				0x01
-#define CAMERA_LINE_POSITION 		0x02
+#define LINE_CAMERA_GPIO		GPIOB
+#define LINE_CAMERA_CLK 		(1<<8)
+#define LINE_CAMERA_SI	 		(1<<10)
 
-#define CAMERA_STATE_NULL	 		0x00
-#define CAMERA_STATE_NO_CONNECTED 	0xFF
-#define CAMERA_STATE_CORRECT 		0xA1
+#define LINE_CAMERA_PIXELS_COUNT	(u32)128
 
-struct sCamera
+#define  CAMERA_ON_LINE 		(u32)(1<<0)
+
+struct sLineCamera
 {
-	u8 state;
-	i32 line_position;
+	u32 state, flag, frame_flag;
+  i32 line_position;
+	i32 average;
+	i16 pixels_raw[LINE_CAMERA_PIXELS_COUNT];
+	i16 pixels[LINE_CAMERA_PIXELS_COUNT];
 };
 
-struct sCamera g_camera;
+struct sLineCamera g_camera;
+
 
 void camera_init();
-void camera_read();
+u32 camera_read();
 
 #endif

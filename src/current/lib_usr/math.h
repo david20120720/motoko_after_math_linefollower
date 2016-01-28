@@ -1,7 +1,9 @@
 #ifndef _MATH_H_
-#define _MATH_H_ 
+#define _MATH_H_
 
 #define mint	float
+
+#define PI_   (float)3.141592654
 
 
 #define MEDIAN_FILTER_FIFO_SIZE 5
@@ -15,6 +17,10 @@ mint m_map(mint sa, mint sb, mint da, mint db, mint value);
 
 void m_srand(unsigned int seed);
 unsigned int m_rnd();
+
+float m_sqrt(float x);
+float m_atan(float value);
+float m_atan2(float y, float x);
 
 
 #endif
