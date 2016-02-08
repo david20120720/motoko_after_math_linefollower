@@ -154,7 +154,7 @@ u32 esp8266_connect(char *ip, u32 port, char *tx_buffer, u32 tx_buffer_length, c
 
   // AT+CIPSTART="TCP","192.168.2.2",2000
 
-  if (esp8266_find_stream((char*)"OK", 7, 500) == 0)
+  if (esp8266_find_stream((char*)"OK", 2, 500) == 0)
     return ESP8266_SERVER_CONNECTING_ERROR;
 
 
