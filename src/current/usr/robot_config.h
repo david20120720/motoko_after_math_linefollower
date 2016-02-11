@@ -1,6 +1,8 @@
 #ifndef _ROBOT_CONFIG_H_
 #define _ROBOT_CONFIG_H_
 
+
+#define CUSTOM_BRIDGE               1
 /*
   line following parameters
 */

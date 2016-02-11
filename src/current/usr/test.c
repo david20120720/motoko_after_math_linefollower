@@ -99,11 +99,24 @@ void line_sensor_test()
 
 void motor_test()
 {
+	drv8834_run(30, 0);
+	timer_delay_ms(800);
+
+	drv8834_run(-30, 0);
+	timer_delay_ms(800);
+
+	drv8834_run(0, 30);
+	timer_delay_ms(800);
+
+	drv8834_run(0, -30);
+	timer_delay_ms(800);
+
+
 	drv8834_run(30, 30);
-	timer_delay_ms(1000);
+	timer_delay_ms(800);
 
 	drv8834_run(-30, -30);
-	timer_delay_ms(1000);
+	timer_delay_ms(800);
 
 	drv8834_run(0, 0);
 	timer_delay_ms(1000);
