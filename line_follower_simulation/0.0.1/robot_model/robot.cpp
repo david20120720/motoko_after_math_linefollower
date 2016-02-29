@@ -263,7 +263,7 @@ void CRobot::visualise_init()
   u32 window_width = 800;
   u32 window_height = 600;
 
-  g_view_state = 0;
+  g_view_state = 3;
 
   int num = 0;
 
