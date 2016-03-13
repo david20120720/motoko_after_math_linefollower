@@ -1,10 +1,4 @@
-#include "../lib_usr/line_sensor.h"
-
-#include "../lib_usr/lsm9ds0.h"
-#include "../lib_usr/l3g4200.h"
-#include "../lib_usr/hmc5883.h"
-#include "../lib_usr/camera.h"
-#include "../lib_usr/math.h"
+#include "../lib_usr/lib_usr.h"
 
 #include "line_follower.h"
 #include "broken_line.h"

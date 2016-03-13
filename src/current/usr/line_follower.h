@@ -1,8 +1,7 @@
 #ifndef _LINE_FOLLOWER_H_
 #define _LINE_FOLLOWER_H_
 
-#include "../os/suzuha_os.h"
-#include "pid.h"
+#include "../lib_usr/lib_usr.h"
 #include "robot_config.h"
 
 

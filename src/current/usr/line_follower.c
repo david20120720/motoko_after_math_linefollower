@@ -1,8 +1,4 @@
 #include "line_follower.h"
-
-#include "../lib_usr/line_sensor.h"
-#include "../lib_usr/math.h"
-#include "pid.h"
 #include "q_predictor.h"
 
 struct sPID g_line_pid;

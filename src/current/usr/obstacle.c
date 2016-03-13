@@ -1,11 +1,5 @@
 #include "obstacle.h"
 
-#include "../lib_usr/line_sensor.h"
-#include "../lib_usr/lsm9ds0.h"
-#include "../lib_usr/l3g4200.h"
-#include "../lib_usr/hmc5883.h"
-
-#include "../lib_usr/math.h"
 
 i32 abs_(i32 x)
 {
@@ -54,7 +48,7 @@ void obstacle_go_forward(u32 speed, u32 time)
 	float error_prev = 0.0;
 
 	float kp = 0.0003;
-	float kd = 0.001; 
+	float kd = 0.001;
 
 	float speed_ = 0.0;
 	float ks = 0.8;

@@ -1,5 +1,4 @@
 #include "q_predictor.h"
-#include "../lib_usr/math.h"
 
 i16 predictor_models_init[Q_PREDICTOR_MODELS_COUNT][Q_PREDICTOR_MODEL_SIZE] =
 {

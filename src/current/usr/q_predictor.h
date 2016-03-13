@@ -1,11 +1,11 @@
 #ifndef _Q_PREDICTOR_H_
 #define _Q_PREDICTOR_H_
 
-#include "../os/suzuha_os.h"
+#include "../lib_usr/lib_usr.h"
 #include "robot_config.h"
 
 #define Q_PREDICTOR_MODEL_SIZE		(u32)16
-#define Q_PREDICTOR_MODELS_COUNT	(u32)8 
+#define Q_PREDICTOR_MODELS_COUNT	(u32)8
 
 struct sQPredictor
 {

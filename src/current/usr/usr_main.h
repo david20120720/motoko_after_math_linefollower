@@ -2,7 +2,7 @@
 #define _USR_MAIN_H_
 
 
-#include "../os/suzuha_os.h"
+#include "../lib_usr/lib_usr.h"
 
 
 #define THREAD_STACK_SIZE	128

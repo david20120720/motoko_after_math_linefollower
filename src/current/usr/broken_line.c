@@ -1,7 +1,5 @@
 #include "broken_line.h"
-#include "../lib_usr/line_sensor.h"
 
-#include "../lib_usr/math.h"
 
 #define LINE_SEARCH_TIME_DT		5
 
