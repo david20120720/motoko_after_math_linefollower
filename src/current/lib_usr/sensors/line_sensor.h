@@ -17,8 +17,9 @@
 #define LINE_STEP_S	((i32)LINE_MAX/(i32)8)
 
 
-//#define LINE_SENSOR_TRESHOLD	(i32)(-200)
-#define LINE_SENSOR_TRESHOLD	(i32)(-300)
+//#define LINE_SENSOR_TRESHOLD	(i32)(-100)
+#define LINE_SENSOR_TRESHOLD	(i32)(-200)
+//#define LINE_SENSOR_TRESHOLD	(i32)(-300)
 //#define LINE_SENSOR_TRESHOLD	(i32)(-350)
 
 

@@ -1,7 +1,12 @@
 #include "line_sensor.h"
 
-
+#ifdef MOTOR_AFTERMATH
 i16 rgb_calibration[]  =  {-487, -284, -214, -345, -270, -163, -184, -369};
+#endif
+
+#ifdef UNTOLD_TRUTH
+i16 rgb_calibration[]  =  {-703, -526, -475, -492, -533, -510, -728, -714};
+#endif
 //i16 rgb_calibration[] = {-558, -287, -179, -110,  -97, -110, -304, -498};
 //i16 rgb_calibration[] = {822, 833, 981, 959, 850, 810, 866, 970 };
 

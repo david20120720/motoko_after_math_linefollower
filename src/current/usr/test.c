@@ -93,24 +93,25 @@ void line_sensor_test()
 
 void motor_test()
 {
-	drv8834_run(30, 0);
+	/*
+	drv8834_run(SPEED_MAX, 0);
 	timer_delay_ms(800);
 
-	drv8834_run(-30, 0);
+	drv8834_run(-SPEED_MAX, 0);
 	timer_delay_ms(800);
 
-	drv8834_run(0, 30);
+	drv8834_run(0, SPEED_MAX);
 	timer_delay_ms(800);
 
-	drv8834_run(0, -30);
+	drv8834_run(0, -SPEED_MAX);
 	timer_delay_ms(800);
+*/
 
+	drv8834_run(SPEED_MAX + MOTOR_OFFSET, SPEED_MAX - MOTOR_OFFSET);
+	timer_delay_ms(1500);
 
-	drv8834_run(30, 30);
-	timer_delay_ms(800);
-
-	drv8834_run(-30, -30);
-	timer_delay_ms(800);
+	drv8834_run(-SPEED_MAX + MOTOR_OFFSET, -SPEED_MAX - MOTOR_OFFSET);
+	timer_delay_ms(200);
 
 	drv8834_run(0, 0);
 	timer_delay_ms(1000);

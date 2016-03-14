@@ -154,10 +154,11 @@ void main_thread()
 			timer_delay_ms(1000);
 			line_follower();
 
+			//motor_test();
 			//line_sensor_test();
 			//sensor_test();
 			//rotation_test();
-			//im1u_test();
+			//imu_test();
 
 		}
 
