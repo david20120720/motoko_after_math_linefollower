@@ -56,34 +56,34 @@ void line_sensor_test()
 	u32 i;
 	while (1)
 	{
-    led_on(LED_0);
+    	led_on(LED_0);
 
 		for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
-			printf_("%i ", g_line_sensor.raw_data_off[i] - g_line_sensor.raw_data_on[i]);
-
-        /*
-		for (i = 0; i < SENSORS_COUNT; i++)
-			printf_("%u ", g_rgb.ambient[i]);
+			printf_("%i ", g_line_sensor.raw_data_dif[i]);
 		printf_("\n");
 
 		for (i = 0; i < SENSORS_COUNT; i++)
-			printf_("%u ", g_rgb.r[i]);
+			printf_("%i ", g_rgb.ambient[i]);
 		printf_("\n");
 
 		for (i = 0; i < SENSORS_COUNT; i++)
-			printf_("%u ", g_rgb.g[i]);
+			printf_("%i ", g_rgb.r[i]);
 		printf_("\n");
 
 		for (i = 0; i < SENSORS_COUNT; i++)
-			printf_("%u ", g_rgb.b[i]);
+			printf_("%i ", g_rgb.g[i]);
 		printf_("\n");
 
 		for (i = 0; i < SENSORS_COUNT; i++)
-			printf_("%u ", g_rgb.proximity[i]);
+			printf_("%i ", g_rgb.b[i]);
 		printf_("\n");
- 		*/
 
-		printf_("\n");
+		printf_("LINE : %i %i %i\n", 	g_line_sensor.line_position,
+										g_line_sensor.on_line
+									);
+
+
+		printf_("\n\n");
 
 		led_off(LED_0);
 		timer_delay_ms(200);

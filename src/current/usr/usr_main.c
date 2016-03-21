@@ -30,7 +30,7 @@ void line_sensor_thread()
  	while (1)
  	{
  		event_timer_wait(EVENT_TIMER_0_ID);
-		line_sensor_read();
+		line_sensor_read(0);
  	}
 }
 

@@ -2,8 +2,8 @@
 #define _ROBOT_CONFIG_H_
 
 
-//#define MOTOR_AFTERMATH   1
-#define UNTOLD_TRUTH   1
+#define MOTOR_AFTERMATH   1
+//#define UNTOLD_TRUTH   1
 
 #ifdef MOTOR_AFTERMATH
 
@@ -21,9 +21,9 @@
 
 
 #define   CONFIG_SPEED_MIN          (float)0.5    /*minimal robot speed*/
-#define   CONFIG_SPEED_MAX          (float)1.0    /*maximal robot speed*/
+#define   CONFIG_SPEED_MAX          (float)0.6    /*maximal robot speed*/
 #define   CONFIG_SPEED_BASE         (float)0.5    /*base robot speed - for mode without speed ramp controller*/
-#define   CONFIG_KS                 (float)0.02   /*speed rising time*/
+#define   CONFIG_KS                 (float)0.01   /*speed rising time*/
 
 #define CONFIG_REQUIRED_MIN         (float)0.0
 #define CONFIG_REQUIRED_MAX         (float)0.5
@@ -39,7 +39,7 @@
 */
 
 #define CONFIG_LINE_SEARCH_TIME 	  (u32)400     /*one curve time in ms*/
-#define CONFIG_LINE_SEARCH_SPEED 	  (i32)50      /*in 0..100 range*/
+#define CONFIG_LINE_SEARCH_SPEED 	  (i32)70      /*in 0..100 range*/
 
 
 /*

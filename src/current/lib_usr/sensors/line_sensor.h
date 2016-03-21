@@ -5,33 +5,15 @@
 #include "../lib_usr.h"
 #include "rgb_i2c.h"
 
-#define IR_LINE_SENSORS_COUNT	8
-
-// #define IR_LINE_POS_FIFO_SIZE	4
-
-//#define LINE_OFFSET (i32)32
-#define LINE_OFFSET (i32)38
-
-#define LINE_MAX	((i32)256)
-#define LINE_STEP	((i32)LINE_MAX/(i32)4)
-#define LINE_STEP_S	((i32)LINE_MAX/(i32)8)
+#define LINE_SENSOR_TRESHOLD	(i32)200
+#define LINE_MAX 				(i32)300
+#define OBSTACLE_SENSOR_TRESHOLD	800
 
 
-//#define LINE_SENSOR_TRESHOLD	(i32)(-100)
-#define LINE_SENSOR_TRESHOLD	(i32)(-200)
-//#define LINE_SENSOR_TRESHOLD	(i32)(-300)
-//#define LINE_SENSOR_TRESHOLD	(i32)(-350)
-
-
-//#define OBSTACLE_SENSOR_TRESHOLD	3000
-//#define OBSTACLE_SENSOR_TRESHOLD	300
-#define OBSTACLE_SENSOR_TRESHOLD	520
-//#define OBSTACLE_SENSOR_TRESHOLD	2500
-
-
-
+#define LINE_OFFSET (i32)256
 #define IR_ON_LINE (u32)8
 
+#define IR_LINE_SENSORS_COUNT	8
 
 #define SENSORS_COUNT (8 + 1)
 
@@ -40,19 +22,11 @@
 #define IR_LED_PIN	(1<<8)
 
 
-
-#define IR_FLAG_ON_LINE			(1<<0)
-#define IR_FLAG_ON_LINE_DETECTED	(1<<1)
-
-
-
 struct sLineSensor
 {
 	u8 state;
-  u8 tmp[SENSORS_COUNT];
+  	u8 tmp[SENSORS_COUNT];
 
-	i16 raw_data_on[SENSORS_COUNT];
-	i16 raw_data_off[SENSORS_COUNT];
 	i16 raw_data_dif[SENSORS_COUNT];
 
 	u8 on_line;
@@ -60,13 +34,15 @@ struct sLineSensor
 	i32 obstacle_position;
 
 	u8 flag;
+
+	i16 treshold;
 };
 
 
 struct sLineSensor g_line_sensor;
 
 u32 line_sensor_init();
-void line_sensor_read();
+void line_sensor_read(u8 calibration_enabled);
 
 void line_sensor_clear_flag(u8 flag);
 
