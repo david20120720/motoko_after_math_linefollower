@@ -19,7 +19,7 @@ i16 predictor_q_init[Q_PREDICTOR_MODELS_COUNT] =
 
 i16 predictor_output_init[Q_PREDICTOR_MODELS_COUNT] =
 {
-	0, 0, 0, 0, 0, 0, 0, 0
+	0, 150, 200, 250, 300, 300, 300, 300
 };
 
 
@@ -101,8 +101,10 @@ float q_predictor_process(float input, float output_min, float output_max)
   */
   float delta = CONFIG_Q_DELTA;
 
+/*
   g_q_predictor.output[g_q_predictor.state]+= delta*(0.5 - g_q_predictor.q[g_q_predictor.state]);
   g_q_predictor.output[g_q_predictor.state] = m_saturate(g_q_predictor.output[g_q_predictor.state], output_min, output_max);
+*/
 
   return g_q_predictor.output[g_q_predictor.state]*m_sgn(input);
 }

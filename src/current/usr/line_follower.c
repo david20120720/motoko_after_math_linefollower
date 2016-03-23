@@ -38,7 +38,7 @@ void line_follower_main()
 	//this is ramp smooth speed up controller
 	#if CONFIG_USE_RAMP_SPEED == 1
 	float ks = CONFIG_KS;
-	g_line_follower.base_speed = m_min(g_line_follower.base_speed + ks*(1.0 - m_abs(error)), 1.0 - m_abs(error));
+	g_line_follower.base_speed = m_min(g_line_follower.base_speed + ks*(1.0 - m_abs(error)), 1.0 - CONFIG_KS_2*m_abs(error));
 	g_line_follower.base_speed = m_saturate(g_line_follower.base_speed, CONFIG_SPEED_MIN, g_line_follower.base_speed_max);
 	#else
 	g_line_follower.base_speed = CONFIG_SPEED_BASE;

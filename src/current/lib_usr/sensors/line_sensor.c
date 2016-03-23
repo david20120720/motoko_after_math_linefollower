@@ -14,6 +14,8 @@ i16 rgb_w[] = {
 u32 line_sensor_init()
 {
 	u32 i, j;
+	timer_delay_ms(100);
+
 	rgb_init();
 	rgb_read();
 
@@ -39,7 +41,8 @@ u32 line_sensor_init()
 
 	line_sensor_read(1);
 
-	for (j = 0; j < 8; j++)
+	u32 calibration_count = 32;
+	for (j = 0; j < calibration_count; j++)
 	{
 		line_sensor_read(1);
 
@@ -54,10 +57,10 @@ u32 line_sensor_init()
 
 	for (i = 0; i < (SENSORS_COUNT-1); i++)
 	{
-		rgb_calibration_ambient[i]/= 8;
-		rgb_calibration_r[i]/= 8;
-		rgb_calibration_g[i]/= 8;
-		rgb_calibration_b[i]/= 8;
+		rgb_calibration_ambient[i]/= calibration_count;
+		rgb_calibration_r[i]/= calibration_count;
+		rgb_calibration_g[i]/= calibration_count;
+		rgb_calibration_b[i]/= calibration_count;
 	}
 
 	return rgb_error_result;
@@ -106,6 +109,9 @@ void line_sensor_read(u8 calibration_enabled)
 	average_g/= (RGB_SENSORS_COUNT-1);
 	average_b/= (RGB_SENSORS_COUNT-1);
 
+	u32 max_a_idx = 0;
+	u32 max_b_idx = 0;
+
 	for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
 	{
 		g_rgb.ambient[i]-= average_ambient;
@@ -125,10 +131,18 @@ void line_sensor_read(u8 calibration_enabled)
     		 tmp = g_rgb.b[i];
 
     	g_line_sensor.raw_data_dif[i] = -tmp;
+
+		if (g_line_sensor.raw_data_dif[i] > g_line_sensor.raw_data_dif[max_a_idx])
+			max_a_idx = i;
 	}
+
+	for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
+	if ((g_line_sensor.raw_data_dif[i] > g_line_sensor.raw_data_dif[max_b_idx]) && (i != max_a_idx))
+		max_b_idx = i;
 
 	i32 sum = 0;
 	i32 average = 0;
+
 	for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
 		average+= g_line_sensor.raw_data_dif[i];
 
@@ -137,7 +151,6 @@ void line_sensor_read(u8 calibration_enabled)
 
 	sum = sum/average;
 
-
 	if (average > LINE_SENSOR_TRESHOLD)
 	{
 		sum = sum - LINE_OFFSET;
@@ -145,6 +158,12 @@ void line_sensor_read(u8 calibration_enabled)
 			sum = LINE_MAX;
 		if (sum < -LINE_MAX)
 			sum = -LINE_MAX;
+
+		if (max_a_idx == 0)
+			sum = -LINE_MAX;
+
+		if (max_a_idx == 7)
+			sum = LINE_MAX;
 
 		g_line_sensor.line_position = sum;
 		g_line_sensor.on_line = IR_ON_LINE;

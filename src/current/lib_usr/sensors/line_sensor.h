@@ -5,12 +5,10 @@
 #include "../lib_usr.h"
 #include "rgb_i2c.h"
 
-#define LINE_SENSOR_TRESHOLD	(i32)200
-#define LINE_MAX 				(i32)300
-#define OBSTACLE_SENSOR_TRESHOLD	800
+#define LINE_MAX 				 	(i32)300
+#define OBSTACLE_SENSOR_TRESHOLD		800
 
 
-#define LINE_OFFSET (i32)256
 #define IR_ON_LINE (u32)8
 
 #define IR_LINE_SENSORS_COUNT	8
