@@ -160,7 +160,7 @@ void TIM2_IRQHandler()
 {
 	switch (g_camera.state)
 	{
-	 case 0 :
+	 		case 0 :
 							LINE_CAMERA_GPIO->BRR = LINE_CAMERA_CLK;    /*	CLK = 0	*/
 							LINE_CAMERA_GPIO->BSRR = LINE_CAMERA_SI;   	/*	SI = 1	*/
 

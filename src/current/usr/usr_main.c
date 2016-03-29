@@ -137,6 +137,9 @@ void main_thread()
 
 	broken_line_init();
 	obstacle_init();
+	#if CONFIG_USE_CAMERA == 1
+	camera_init();
+	#endif
 
 	while (1)
 	{
@@ -159,6 +162,7 @@ void main_thread()
 			//sensor_test();
 			//rotation_test();
 			//imu_test();
+		//	camera_test();
 
 		}
 

@@ -182,7 +182,6 @@ void camera_test()
 		for (i = 0; i < LINE_CAMERA_PIXELS_COUNT; i++)
 				printf_("%i", g_camera.pixels[i]);
 		printf_(" > %i %i %i %u\n", g_camera.flag, g_camera.average, g_camera.line_position, timer_stop - timer_start);
-		//printf_("line %i  time %u\n", g_camera.line_position, timer_stop - timer_start);
 		led_off(LED_0);
 
 		timer_delay_ms(200);

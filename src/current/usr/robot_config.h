@@ -7,11 +7,14 @@
 
 #ifdef MOTOR_AFTERMATH
 
-#define LINE_SENSOR_TRESHOLD	(i32)200
+//#define LINE_SENSOR_TRESHOLD	(i32)200
+#define LINE_SENSOR_TRESHOLD	(i32)150
 
 #define LINE_OFFSET (i32)287
 
 #define MOTOR_OFFSET                0
+
+#define CONFIG_USE_CAMERA                  1
 /*
   line following parameters
 */
@@ -25,7 +28,7 @@
 
 
 #define   CONFIG_SPEED_MIN          (float)0.5    /*minimal robot speed*/
-#define   CONFIG_SPEED_MAX          (float)0.8    /*maximal robot speed*/
+#define   CONFIG_SPEED_MAX          (float)0.9    /*maximal robot speed*/
 #define   CONFIG_SPEED_BASE         (float)0.4    /*base robot speed - for mode without speed ramp controller*/
 #define   CONFIG_KS                 (float)0.02   /*speed rising time*/
 #define   CONFIG_KS_2                (float)8.0   /*speed rising time*/
@@ -66,7 +69,10 @@
 
 #ifdef UNTOLD_TRUTH
 
+
 #define LINE_SENSOR_TRESHOLD	(i32)200
+
+#define CONFIG_USE_CAMERA                  0
 
 
 #define CUSTOM_BRIDGE               1
