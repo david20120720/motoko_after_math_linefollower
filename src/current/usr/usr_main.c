@@ -162,8 +162,7 @@ void main_thread()
 			//sensor_test();
 			//rotation_test();
 			//imu_test();
-		//	camera_test();
-
+			//camera_test();
 		}
 
 		led_on(LED_0);

@@ -1,6 +1,6 @@
 #include "rgb_i2c.h"
 
-#define RGB_I2C_DELAY_LOOPS 1
+#define RGB_I2C_DELAY_LOOPS 4
 
 u8 rgb_raw[RGB_SENSORS_COUNT];
 

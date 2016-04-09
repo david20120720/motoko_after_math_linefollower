@@ -10,7 +10,7 @@
 //#define LINE_SENSOR_TRESHOLD	(i32)200
 #define LINE_SENSOR_TRESHOLD	(i32)150
 
-#define LINE_OFFSET (i32)287
+#define LINE_OFFSET (i32)0
 
 #define MOTOR_OFFSET                0
 

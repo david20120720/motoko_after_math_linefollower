@@ -1,15 +1,15 @@
 #include "line_sensor.h"
 
 
-#define LINE_STEP_W	64
+i32 rgb_calibration_ambient[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
+i32 rgb_calibration_r[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
+i32 rgb_calibration_g[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
+i32 rgb_calibration_b[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
 
-i16 rgb_calibration_ambient[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
-i16 rgb_calibration_r[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
-i16 rgb_calibration_g[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
-i16 rgb_calibration_b[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
 i16 rgb_w[] = {
-				LINE_STEP_W*1, LINE_STEP_W*2, LINE_STEP_W*3, LINE_STEP_W*4,
-				LINE_STEP_W*5, LINE_STEP_W*6, LINE_STEP_W*7, LINE_STEP_W*8};
+				-LINE_STEP_W*4, -LINE_STEP_W*3, -LINE_STEP_W*2, -LINE_STEP_W*1,
+				 LINE_STEP_W*1,  LINE_STEP_W*2,  LINE_STEP_W*3,  LINE_STEP_W*4};
+
 
 u32 line_sensor_init()
 {
@@ -46,7 +46,7 @@ u32 line_sensor_init()
 	{
 		line_sensor_read(1);
 
-		for (i = 0; i < (SENSORS_COUNT-1); i++)
+		for (i = 0; i < LINE_SENSORS_COUNT; i++)
 		{
 			rgb_calibration_ambient[i]+=  g_rgb.ambient[i];
 			rgb_calibration_r[i]+=  g_rgb.r[i];
@@ -55,7 +55,7 @@ u32 line_sensor_init()
 		}
 	}
 
-	for (i = 0; i < (SENSORS_COUNT-1); i++)
+	for (i = 0; i < LINE_SENSORS_COUNT;  i++)
 	{
 		rgb_calibration_ambient[i]/= calibration_count;
 		rgb_calibration_r[i]/= calibration_count;
@@ -86,12 +86,12 @@ void line_sensor_read(u8 calibration_enabled)
 	//calculate obstacle position
 	g_line_sensor.obstacle_position = (g_line_sensor.obstacle_position*7 + g_rgb.proximity[SENSORS_COUNT-1])/8;
 
-	i16 average_ambient = 0;
-	i16 average_r = 0;
-	i16 average_g = 0;
-	i16 average_b = 0;
+	i32 average_ambient = 0;
+	i32 average_r = 0;
+	i32 average_g = 0;
+	i32 average_b = 0;
 
-	for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
+	for (i = 0; i < LINE_SENSORS_COUNT; i++)
 	{
 		g_rgb.ambient[i]-= rgb_calibration_ambient[i];
 		g_rgb.r[i]-= rgb_calibration_r[i];
@@ -104,103 +104,104 @@ void line_sensor_read(u8 calibration_enabled)
 		average_b+= g_rgb.b[i];
 	}
 
-	average_ambient/= (RGB_SENSORS_COUNT-1);
-	average_r/= (RGB_SENSORS_COUNT-1);
-	average_g/= (RGB_SENSORS_COUNT-1);
-	average_b/= (RGB_SENSORS_COUNT-1);
+	average_ambient/=LINE_SENSORS_COUNT;
+	average_r/=LINE_SENSORS_COUNT;
+	average_g/=LINE_SENSORS_COUNT;
+	average_b/=LINE_SENSORS_COUNT;
 
-	u32 max_a_idx = 0;
-	u32 max_b_idx = 0;
-
-	for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
+	for (i = 0; i <LINE_SENSORS_COUNT; i++)
 	{
-		g_rgb.ambient[i]-= average_ambient;
-		g_rgb.r[i]-= average_r;
-		g_rgb.g[i]-= average_g;
-		g_rgb.b[i]-= average_b;
-
-		i32 tmp = g_rgb.ambient[i];
-
-    	if (g_rgb.r[i] < tmp)
-    		 tmp = g_rgb.r[i];
-
-    	if (g_rgb.g[i] < tmp)
-    		 tmp = g_rgb.g[i];
-
-    	if (g_rgb.b[i] < tmp)
-    		 tmp = g_rgb.b[i];
-
-    	g_line_sensor.raw_data_dif[i] = -tmp;
-
-		if (g_line_sensor.raw_data_dif[i] > g_line_sensor.raw_data_dif[max_a_idx])
-			max_a_idx = i;
+		g_rgb.ambient[i] =  -(g_rgb.ambient[i] - average_ambient);
+		g_rgb.r[i] = (g_rgb.r[i] - average_r);
+		g_rgb.g[i] = (g_rgb.g[i] - average_g);
+		g_rgb.b[i] = (g_rgb.b[i] - average_b);
 	}
 
-	for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
-	if ((g_line_sensor.raw_data_dif[i] > g_line_sensor.raw_data_dif[max_b_idx]) && (i != max_a_idx))
-		max_b_idx = i;
-
-	i32 sum = 0;
-	i32 average = 0;
-
-	for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
-		average+= g_line_sensor.raw_data_dif[i];
-
-	for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
-		sum+= rgb_w[i]*g_line_sensor.raw_data_dif[i];
-
-	sum = sum/average;
-
-	if (average > LINE_SENSOR_TRESHOLD)
+	for (i = 0; i <LINE_SENSORS_COUNT; i++)
 	{
-		sum = sum - LINE_OFFSET;
-		if (sum > LINE_MAX)
-			sum = LINE_MAX;
-		if (sum < -LINE_MAX)
-			sum = -LINE_MAX;
+		g_line_sensor.raw_data_dif[i] = g_rgb.ambient[i];
+	}
 
-		if (max_a_idx == 0)
-			sum = -LINE_MAX;
+	/*
+		i32 tmp = g_rgb.ambient[i];
 
-		if (max_a_idx == 7)
-			sum = LINE_MAX;
+    if (g_rgb.r[i] < tmp)
+    	 tmp = g_rgb.r[i];
 
-		g_line_sensor.line_position = sum;
+    if (g_rgb.g[i] < tmp)
+    	 tmp = g_rgb.g[i];
+
+    if (g_rgb.b[i] < tmp)
+    	 tmp = g_rgb.b[i];
+
+    g_line_sensor.raw_data_dif[i] = -tmp;
+		*/
+
+	i32 line_position = 0, value = 0, tmp = 0;
+
+	tmp = g_line_sensor.raw_data_dif[3] + g_line_sensor.raw_data_dif[4];
+	if (tmp != 0)
+	{
+		line_position = ( g_line_sensor.raw_data_dif[3]*rgb_w[3] + g_line_sensor.raw_data_dif[4]*rgb_w[4] )/tmp;
+		value = ( g_line_sensor.raw_data_dif[3] + g_line_sensor.raw_data_dif[4])/2;
+	}
+
+	tmp = g_line_sensor.raw_data_dif[5] + g_line_sensor.raw_data_dif[4];
+	if ((tmp != 0) && (g_line_sensor.raw_data_dif[5] > LINE_SENSOR_TRESHOLD))
+	{
+		line_position = ( g_line_sensor.raw_data_dif[5]*rgb_w[5] + g_line_sensor.raw_data_dif[4]*rgb_w[4] )/tmp;
+		value = g_line_sensor.raw_data_dif[5];
+	}
+
+	tmp = g_line_sensor.raw_data_dif[2] + g_line_sensor.raw_data_dif[3];
+	if ((tmp != 0) && (g_line_sensor.raw_data_dif[2] > LINE_SENSOR_TRESHOLD))
+	{
+		line_position = ( g_line_sensor.raw_data_dif[2]*rgb_w[2] + g_line_sensor.raw_data_dif[3]*rgb_w[3] )/tmp;
+		value = g_line_sensor.raw_data_dif[2];
+	}
+
+	tmp = g_line_sensor.raw_data_dif[6] + g_line_sensor.raw_data_dif[5];
+	if ((tmp != 0) && (g_line_sensor.raw_data_dif[6] > LINE_SENSOR_TRESHOLD))
+	{
+			line_position = ( g_line_sensor.raw_data_dif[6]*rgb_w[6] + g_line_sensor.raw_data_dif[5]*rgb_w[5] )/tmp;
+			value = g_line_sensor.raw_data_dif[6];
+	}
+
+	tmp = g_line_sensor.raw_data_dif[1] + g_line_sensor.raw_data_dif[2];
+	if ((tmp != 0) && (g_line_sensor.raw_data_dif[1] > LINE_SENSOR_TRESHOLD))
+	{
+			line_position = ( g_line_sensor.raw_data_dif[1]*rgb_w[1] + g_line_sensor.raw_data_dif[2]*rgb_w[2] )/tmp;
+			value = g_line_sensor.raw_data_dif[1];
+	}
+
+	if (g_line_sensor.raw_data_dif[7] > LINE_SENSOR_TRESHOLD)
+	{
+			line_position = rgb_w[7];
+			value = g_line_sensor.raw_data_dif[7];
+	}
+
+	if (g_line_sensor.raw_data_dif[0] > LINE_SENSOR_TRESHOLD)
+	{
+		line_position = rgb_w[0];
+		value = g_line_sensor.raw_data_dif[0];
+	}
+
+	//if (((value*100) / average) > LINE_SENSOR_TRESHOLD)
+
+	if (value > LINE_SENSOR_TRESHOLD)
+	{
+		line_position = line_position - LINE_OFFSET;
+		if (line_position > LINE_MAX)
+			line_position = LINE_MAX;
+
+		if (line_position < -LINE_MAX)
+			line_position = -LINE_MAX;
+
+			g_line_sensor.line_position = line_position;
 		g_line_sensor.on_line = IR_ON_LINE;
 	}
 	else
 	{
 		g_line_sensor.on_line = 0;
 	}
-
 }
-
-/*
-	i32 average = 0;
-	for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
-		average+= g_rgb.ambient[i];
-	average/= (RGB_SENSORS_COUNT-1);
-
-	i32 max = 0;
-    for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
-     	if (g_rgb.ambient[i] > max)
-    		max = g_rgb.ambient[i];
-
-    for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
-    {
-    	i32 tmp = 1024;
-
-    	if (g_rgb.r[i] < tmp)
-    		 g_rgb.r[i] = tmp;
-
-    	if (g_rgb.g[i] < tmp)
-    		 g_rgb.g[i] = tmp;
-
-    	if (g_rgb.b[i] < tmp)
-    		 g_rgb.b[i] = tmp;
-
-    	g_line_sensor.raw_data_dif[i] = (g_rgb.ambient[i] + rgb_calibration[i]) - tmp;
-	}
-
-	line_sensor_filter();
-*/

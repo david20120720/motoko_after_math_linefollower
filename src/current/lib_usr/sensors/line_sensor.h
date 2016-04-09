@@ -1,11 +1,14 @@
-#ifndef _LINE_SENSOR_
-#define _LINE_SENSOR_
+#ifndef _LINE_SENSOR_H_
+#define _LINE_SENSOR_H_
 
 
 #include "../lib_usr.h"
 #include "rgb_i2c.h"
 
-#define LINE_MAX 				 	(i32)300
+
+#define LINE_STEP_W	64
+
+#define LINE_MAX 				 	(i32)(LINE_STEP_W*4)
 #define OBSTACLE_SENSOR_TRESHOLD		800
 
 
@@ -14,6 +17,7 @@
 #define IR_LINE_SENSORS_COUNT	8
 
 #define SENSORS_COUNT (8 + 1)
+#define LINE_SENSORS_COUNT (8)
 
 
 #define IR_LED_GPIO	GPIOA
