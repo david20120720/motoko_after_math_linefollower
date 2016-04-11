@@ -2,19 +2,19 @@
 #define _ROBOT_CONFIG_H_
 
 
-#define MOTOR_AFTERMATH   1
-// #define UNTOLD_TRUTH   1
+ #define MOTOR_AFTERMATH   1
+//#define UNTOLD_TRUTH   1
 
 #ifdef MOTOR_AFTERMATH
 
 //#define LINE_SENSOR_TRESHOLD	(i32)200
 #define LINE_SENSOR_TRESHOLD	(i32)150
 
-#define LINE_OFFSET (i32)0
+#define LINE_OFFSET               (i32)0
 
-#define MOTOR_OFFSET                0
+#define MOTOR_OFFSET                  0
 
-#define CONFIG_USE_CAMERA                  1
+#define CONFIG_USE_CAMERA                  0
 /*
   line following parameters
 */
@@ -31,7 +31,7 @@
 #define   CONFIG_SPEED_MAX          (float)0.9    /*maximal robot speed*/
 #define   CONFIG_SPEED_BASE         (float)0.4    /*base robot speed - for mode without speed ramp controller*/
 #define   CONFIG_KS                 (float)0.02   /*speed rising time*/
-#define   CONFIG_KS_2                (float)8.0   /*speed rising time*/
+#define   CONFIG_KS_2                (float)5.0   /*speed rising time*/
 
 
 #define CONFIG_REQUIRED_MIN         (float)0.0
@@ -70,9 +70,12 @@
 #ifdef UNTOLD_TRUTH
 
 
-#define LINE_SENSOR_TRESHOLD	(i32)200
+#define LINE_SENSOR_TRESHOLD	(i32)150
 
-#define CONFIG_USE_CAMERA                  0
+#define LINE_OFFSET               (i32)0
+
+
+#define CONFIG_USE_CAMERA                  1
 
 
 #define CUSTOM_BRIDGE               1
@@ -80,7 +83,7 @@
 /*
   line following parameters
 */
-#define CONFIG_USE_RAMP_SPEED        0      /*this enables speed ramp controller - KS parameter*/
+#define CONFIG_USE_RAMP_SPEED        1      /*this enables speed ramp controller - KS parameter*/
 #define CONFIG_USE_PREDICTOR         0      /*this enables line shape predictor to estimate erro value*/
 
 #define   CONFIG_KP                 (float)0.126  /*proportional, 0.326*/
@@ -89,10 +92,11 @@
 #define   CONFIG_KD2                (float)0.0    /*second derivative*/
 
 
-#define   CONFIG_SPEED_MIN          (float)0.2    /* minimal robot speed */
+#define   CONFIG_SPEED_MIN          (float)0.3    /* minimal robot speed */
 #define   CONFIG_SPEED_MAX          (float)1.0    /* maximal robot speed */
 #define   CONFIG_SPEED_BASE         (float)0.3    /* base robot speed - for mode without speed ramp controller */
-#define   CONFIG_KS                 (float)0.005  /* speed rising time */
+#define   CONFIG_KS                 (float)0.003   /*speed rising time*/
+#define   CONFIG_KS_2                (float)1.5   /*speed rising time*/
 
 #define CONFIG_REQUIRED_MIN         (float)0.0
 #define CONFIG_REQUIRED_MAX         (float)0.5

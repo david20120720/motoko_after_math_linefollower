@@ -122,6 +122,7 @@ void line_sensor_read(u8 calibration_enabled)
 		g_line_sensor.raw_data_dif[i] = g_rgb.ambient[i];
 	}
 
+
 	/*
 		i32 tmp = g_rgb.ambient[i];
 
@@ -186,8 +187,6 @@ void line_sensor_read(u8 calibration_enabled)
 		value = g_line_sensor.raw_data_dif[0];
 	}
 
-	//if (((value*100) / average) > LINE_SENSOR_TRESHOLD)
-
 	if (value > LINE_SENSOR_TRESHOLD)
 	{
 		line_position = line_position - LINE_OFFSET;
@@ -198,7 +197,7 @@ void line_sensor_read(u8 calibration_enabled)
 			line_position = -LINE_MAX;
 
 			g_line_sensor.line_position = line_position;
-		g_line_sensor.on_line = IR_ON_LINE;
+			g_line_sensor.on_line = IR_ON_LINE;
 	}
 	else
 	{

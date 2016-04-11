@@ -78,7 +78,7 @@ void line_sensor_test()
 			printf_("%i ", g_rgb.b[i]);
 		printf_("\n");
 
-		printf_("LINE : %i %i %i\n", 	g_line_sensor.line_position,
+		printf_("LINE : %i %i \n", 	g_line_sensor.line_position,
 										g_line_sensor.on_line
 									);
 
