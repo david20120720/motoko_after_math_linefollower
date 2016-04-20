@@ -2,10 +2,12 @@
 #define _ROBOT_CONFIG_H_
 
 
-//#define MOTOR_AFTERMATH   1
-#define UNTOLD_TRUTH   1
+#define MOTOR_AFTERMATH   1
+//#define UNTOLD_TRUTH   1
 
 #ifdef MOTOR_AFTERMATH
+
+#define OBSTACLE_SENSOR_TRESHOLD		500
 
 #define LINE_SENSOR_TRESHOLD	(i32)150
 
@@ -56,17 +58,17 @@
 
 /*
   0 - just stop before obstacle
-  1 - turn back 180deg
-  2 - avoid from right side
-  3 - avoid from left side
+  1 - turn back 180deg or avoid, depends on get_mode_jumper()
 */
-#define CONFIG_OBSTACLE_MODE       0
+#define CONFIG_OBSTACLE_MODE       1
 
 #endif
 
 
 
 #ifdef UNTOLD_TRUTH
+
+#define OBSTACLE_SENSOR_TRESHOLD		800
 
 
 #define LINE_SENSOR_TRESHOLD	(i32)150
@@ -120,11 +122,9 @@
 
 /*
   0 - just stop before obstacle
-  1 - turn back 180deg
-  2 - avoid from right side
-  3 - avoid from left side
+  1 - turn back 180deg or avoid, depends on get_mode_jumper()
 */
-#define CONFIG_OBSTACLE_MODE       0
+#define CONFIG_OBSTACLE_MODE       1
 
 #endif
 

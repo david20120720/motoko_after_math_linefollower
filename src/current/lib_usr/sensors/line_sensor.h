@@ -9,7 +9,6 @@
 #define LINE_STEP_W	64
 
 #define LINE_MAX 				 	(i32)(LINE_STEP_W*4)
-#define OBSTACLE_SENSOR_TRESHOLD		800
 
 
 #define IR_ON_LINE (u32)8

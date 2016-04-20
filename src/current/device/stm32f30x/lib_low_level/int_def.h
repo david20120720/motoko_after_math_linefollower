@@ -1,6 +1,10 @@
 #ifndef _INT_DEF_H_
 #define _INT_DEF_H_
 
+#ifndef NULL
+#define NULL      0
+#endif
+
 #ifndef u32
 typedef unsigned int u32 ;
 #endif

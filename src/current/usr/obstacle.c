@@ -1,6 +1,8 @@
 #include "obstacle.h"
 
 
+u32 obstacle_state = 0;
+
 i32 abs_(i32 x)
 {
 	if (x < 0)
@@ -39,7 +41,7 @@ void obstacle_rotate_robot(i32 angle)
 	timer_delay_ms(100);
 }
 
-void obstacle_go_forward(u32 speed, u32 time)
+void obstacle_go_forward(u32 speed, u32 time, u8 (*term_fun)())
 {
 	u32 time_cnt = 0;
 	i32 gyro_angle = 0;
@@ -72,6 +74,10 @@ void obstacle_go_forward(u32 speed, u32 time)
 
 			timer_delay_ms(10);
 			time_cnt+= 10;
+
+			if (term_fun != NULL)
+				if (term_fun() != 0)
+					break;
 		}
 	}
 
@@ -81,32 +87,59 @@ void obstacle_go_forward(u32 speed, u32 time)
 
 void obstacle_init()
 {
-
+	obstacle_state = 0;
 }
 
+
+u8 robot_on_line()
+{
+	if (g_line_sensor.on_line == IR_ON_LINE)
+		return 1;
+	return 0;
+}
 
 
 void obstacle_main()
 {
 	#if CONFIG_OBSTACLE_MODE == 0
-	obstacle_go_forward(0, 100);
+	obstacle_go_forward(0, 100, NULL);
 	#endif
 
 	#if CONFIG_OBSTACLE_MODE == 1
-	obstacle_go_forward(0, 100);
-	obstacle_rotate_robot(180);
-	#endif
+
+	if (get_mode_jumper() == 0)
+	{
+		obstacle_go_forward(0, 100, NULL);
+		obstacle_rotate_robot(180);
+	}
+	else
+	{
+		obstacle_state = 0;
+		if ((obstacle_state&1) == 0)
+		{
+			obstacle_go_forward(0, 100, NULL);
+			obstacle_go_forward(-60, 250, NULL);
+			obstacle_go_forward(0, 100, NULL);
+
+			obstacle_rotate_robot(90);
+			obstacle_go_forward(60, 250, NULL);
+
+			obstacle_rotate_robot(-90);
+			obstacle_go_forward(60, 250, NULL);
+
+			obstacle_rotate_robot(-90);
+			obstacle_go_forward(60, 350, robot_on_line);
 
 
-	#if CONFIG_OBSTACLE_MODE == 2
-	obstacle_go_forward(0, 100);
+			obstacle_rotate_robot(90);
+		}
+		else
+		{
+			obstacle_go_forward(60, 300, NULL);
+		}
 
-	obstacle_rotate_robot(90);
-	obstacle_go_forward(60, 250);
-	obstacle_rotate_robot(-90);
-	obstacle_go_forward(60, 250);
-	obstacle_rotate_robot(-90);
-	obstacle_go_forward(60, 250);
+		obstacle_state++;
+	}
 	#endif
 
 

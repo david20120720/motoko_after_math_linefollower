@@ -92,6 +92,7 @@ void line_follower()
 	u32 cnt = 0;
 
 	line_follower_init();
+	obstacle_init();
 
  	event_timer_set_period(EVENT_TIMER_2_ID, SAMPLIG_PERIOD);
 
@@ -140,6 +141,10 @@ void main_thread()
 	#if CONFIG_USE_CAMERA == 1
 	camera_init();
 	#endif
+
+	u32 mode = get_mode_jumper();
+
+	printf_("mode = %u\n", mode);
 
 	while (1)
 	{
