@@ -31,6 +31,27 @@ void line_sensor_thread()
  	{
  		event_timer_wait(EVENT_TIMER_0_ID);
 		line_sensor_read(0);
+
+/*
+		u32 i;
+		for (i = 0; i < SENSORS_COUNT; i++)
+			printf_("%i ", g_rgb.ambient[i]);
+		printf_("\n");
+
+		for (i = 0; i < SENSORS_COUNT; i++)
+			printf_("%i ", g_rgb.r[i]);
+		printf_("\n");
+
+		for (i = 0; i < SENSORS_COUNT; i++)
+			printf_("%i ", g_rgb.g[i]);
+		printf_("\n");
+
+		for (i = 0; i < SENSORS_COUNT; i++)
+			printf_("%i ", g_rgb.b[i]);
+		printf_("\n");
+		printf_("\n");
+		printf_("\n");
+*/
  	}
 }
 
@@ -102,7 +123,8 @@ void line_follower()
 	{
 		event_timer_wait(EVENT_TIMER_2_ID);
 
-		if (g_line_sensor.obstacle_position > OBSTACLE_SENSOR_TRESHOLD)
+		if ( ((g_line_sensor.obstacle_position > OBSTACLE_SENSOR_TRESHOLD) && (g_lsm9ds0_imu.ax > 8000) && (get_mode_jumper() == 0)) ||
+				 ((g_line_sensor.obstacle_position > OBSTACLE_SENSOR_TRESHOLD) && (g_lsm9ds0_imu.ax > 15000) && (get_mode_jumper() == 1)) )
 			obstacle_main();
 		else
 		if (g_line_sensor.on_line == IR_ON_LINE)
@@ -163,10 +185,10 @@ void main_thread()
 			line_follower();
 
 			//motor_test();
-			//line_sensor_test();
+		//	line_sensor_test();
 			//sensor_test();
 			//rotation_test();
-			//imu_test();
+	//		imu_test();
 			//camera_test();
 		}
 

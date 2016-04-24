@@ -41,7 +41,7 @@ void obstacle_rotate_robot(i32 angle)
 	timer_delay_ms(100);
 }
 
-void obstacle_go_forward(u32 speed, u32 time, u8 (*term_fun)())
+void obstacle_go_forward(i32 speed, u32 time, u8 (*term_fun)())
 {
 	u32 time_cnt = 0;
 	i32 gyro_angle = 0;
@@ -101,6 +101,8 @@ u8 robot_on_line()
 
 void obstacle_main()
 {
+	g_line_sensor.obstacle_position = 0;
+
 	#if CONFIG_OBSTACLE_MODE == 0
 	obstacle_go_forward(0, 100, NULL);
 	#endif
@@ -114,34 +116,53 @@ void obstacle_main()
 	}
 	else
 	{
-		obstacle_state = 0;
-		if ((obstacle_state&1) == 0)
-		{
-			obstacle_go_forward(0, 100, NULL);
-			obstacle_go_forward(-60, 250, NULL);
-			obstacle_go_forward(0, 100, NULL);
+		obstacle_go_forward(0, 50, NULL);
+		obstacle_go_forward(-60, 130, NULL);
+		obstacle_go_forward(0, 50, NULL);
 
-			obstacle_rotate_robot(90);
-			obstacle_go_forward(60, 250, NULL);
+		obstacle_rotate_robot(90);
+		obstacle_go_forward(60, 250, NULL);
 
-			obstacle_rotate_robot(-90);
-			obstacle_go_forward(60, 250, NULL);
+		obstacle_rotate_robot(-90);
+		obstacle_go_forward(60, 350, NULL);
 
-			obstacle_rotate_robot(-90);
-			obstacle_go_forward(60, 350, robot_on_line);
+		obstacle_rotate_robot(-90);
+		obstacle_go_forward(60, 50, NULL);
+		obstacle_go_forward(60, 250, robot_on_line); //360, robot_on_line);
+		//obstacle_go_forward(60, 350, NULL);
 
+		obstacle_rotate_robot(90);
 
-			obstacle_rotate_robot(90);
-		}
-		else
-		{
-			obstacle_go_forward(60, 300, NULL);
-		}
+		/*
+			switch (obstacle_state&3)
+			{
+				case 0:
+				case 3:
+									obstacle_go_forward(0, 50, NULL);
+									obstacle_go_forward(-60, 400, NULL);
+									obstacle_go_forward(0, 50, NULL);
 
+									obstacle_rotate_robot(90);
+									obstacle_go_forward(60, 250, NULL);
+
+									obstacle_rotate_robot(-90);
+									obstacle_go_forward(60, 250, NULL);
+
+									obstacle_rotate_robot(-90);
+									obstacle_go_forward(60, 50, NULL);
+									obstacle_go_forward(60, 350, robot_on_line);
+									//obstacle_go_forward(60, 350, NULL);
+
+									obstacle_rotate_robot(90);
+									break;
+
+				case 1:
+				case 2:
+									obstacle_go_forward(60, 200, NULL);
+									break;
+			}
+			*/
 		obstacle_state++;
 	}
 	#endif
-
-
-	return;
 }

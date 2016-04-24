@@ -27,7 +27,7 @@ struct sLineSensor
 {
 	u8 state;
   u8 tmp[SENSORS_COUNT];
-	i16 raw_data_dif[SENSORS_COUNT];
+	i32 raw_data_dif[SENSORS_COUNT];
 
 	u8 on_line;
 	i32 line_position;

@@ -1,10 +1,33 @@
 #include "line_sensor.h"
 
-
+/*
 i32 rgb_calibration_ambient[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
 i32 rgb_calibration_r[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
 i32 rgb_calibration_g[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
 i32 rgb_calibration_b[]  =  {0, 0, 0, 0, 0, 0, 0, 0};
+*/
+
+i32 rgb_calibration_ambient[]  =  {694, 845, 1003, 823, 854, 924, 940, 685, 206};
+i32 rgb_calibration_r[] = {219, 257, 288, 236, 239, 265, 264, 197, 76};
+i32 rgb_calibration_g[] = {258, 316, 365, 305, 309, 342, 339, 251, 80};
+i32 rgb_calibration_b[] = {252, 307, 363, 293, 304, 338, 349, 260, 75};
+
+
+/*
+i32 rgb_calibration_ambient[]  =  {500, 642, 777, 675, 739, 808, 867, 628, 128};
+i32 rgb_calibration_r[]  =  {150, 184, 211, 187, 202, 230, 238, 177, 51};
+i32 rgb_calibration_g[]  =  {183, 236, 277, 245, 264, 296, 310, 228, 52};
+i32 rgb_calibration_b[]  =  {189, 242, 291, 247, 269, 301, 330, 244, 46};
+*/
+
+
+
+/*
+i32 rgb_calibration_ambient[]  = {10240, 10240, 10240, 10233, 9703, 10240, 10240, 9255, 9419};
+i32 rgb_calibration_r[]  =  {3849, 3892, 3843, 3033, 2807, 3153, 3326, 2950, 3600};
+i32 rgb_calibration_g[]  =  {4476, 4686, 4805, 3821, 3551, 3862, 3989, 3477, 3711};
+i32 rgb_calibration_b[]  =  {4348, 4539, 4766, 3655, 3466, 3760, 4003, 3436, 3509};
+*/
 
 i16 rgb_w[] = {
 				-LINE_STEP_W*4, -LINE_STEP_W*3, -LINE_STEP_W*2, -LINE_STEP_W*1,
@@ -41,6 +64,7 @@ u32 line_sensor_init()
 
 	line_sensor_read(1);
 
+/*
 	u32 calibration_count = 32;
 	for (j = 0; j < calibration_count; j++)
 	{
@@ -62,7 +86,7 @@ u32 line_sensor_init()
 		rgb_calibration_g[i]/= calibration_count;
 		rgb_calibration_b[i]/= calibration_count;
 	}
-
+*/
 	return rgb_error_result;
 }
 
@@ -175,16 +199,17 @@ void line_sensor_read(u8 calibration_enabled)
 			value = g_line_sensor.raw_data_dif[1];
 	}
 
-	if (g_line_sensor.raw_data_dif[7] > LINE_SENSOR_TRESHOLD)
-	{
-			line_position = rgb_w[7];
-			value = g_line_sensor.raw_data_dif[7];
-	}
 
 	if (g_line_sensor.raw_data_dif[0] > LINE_SENSOR_TRESHOLD)
 	{
 		line_position = rgb_w[0];
 		value = g_line_sensor.raw_data_dif[0];
+	}
+
+	if (g_line_sensor.raw_data_dif[7] > LINE_SENSOR_TRESHOLD)
+	{
+			line_position = rgb_w[7];
+			value = g_line_sensor.raw_data_dif[7];
 	}
 
 	if (value > LINE_SENSOR_TRESHOLD)

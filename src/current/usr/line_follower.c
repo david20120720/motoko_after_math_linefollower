@@ -48,9 +48,18 @@ void line_follower_main()
 	#endif
 	g_line_follower.base_speed = m_min(g_line_follower.base_speed + ks*(1.0 - error_), 1.0 - CONFIG_KS_2*error_);
 	g_line_follower.base_speed = m_saturate(g_line_follower.base_speed, CONFIG_SPEED_MIN, g_line_follower.base_speed_max);
+	if (g_lsm9ds0_imu.ax < -3000)
+	{
+			g_line_follower.base_speed = CONFIG_SPEED_MIN;
+	}
 	#else
-	g_line_follower.base_speed = CONFIG_SPEED_BASE;
+	g_line_follower.base_speed = (50*CONFIG_SPEED_BASE)/100;
 	#endif
+
+	if (get_mode_jumper() == 1)
+	{
+		g_line_follower.base_speed = 0.35;
+	}
 
 	g_line_follower.dif_speed = pid_process(&g_line_pid, error);
 

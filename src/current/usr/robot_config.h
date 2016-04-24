@@ -7,7 +7,9 @@
 
 #ifdef MOTOR_AFTERMATH
 
-#define OBSTACLE_SENSOR_TRESHOLD		500
+//#define OBSTACLE_SENSOR_TRESHOLD		500
+//#define OBSTACLE_SENSOR_TRESHOLD		800
+#define OBSTACLE_SENSOR_TRESHOLD		700
 
 #define LINE_SENSOR_TRESHOLD	(i32)150
 
@@ -20,7 +22,7 @@
   line following parameters
 */
 #define CONFIG_USE_RAMP_SPEED        1      /*this enables speed ramp controller - KS parameter*/
-#define CONFIG_USE_PREDICTOR         0      /*this enables line shape predictor to estimate erro value*/
+#define CONFIG_USE_PREDICTOR         1      /*this enables line shape predictor to estimate erro value*/
 
 #define   CONFIG_KP                 (float)0.326  /*proportional, 0.326*/
 #define   CONFIG_KI                 (float)0.0    /*integrate*/
@@ -29,7 +31,8 @@
 
 
 #define   CONFIG_SPEED_MIN          (float)0.5    /*minimal robot speed*/
-#define   CONFIG_SPEED_MAX          (float)0.9    /*maximal robot speed*/
+//#define   CONFIG_SPEED_MAX          (float)0.9    /*maximal robot speed*/
+#define   CONFIG_SPEED_MAX          (float)0.8    /*maximal robot speed*/
 #define   CONFIG_SPEED_BASE         (float)0.4    /*base robot speed - for mode without speed ramp controller*/
 #define   CONFIG_KS                 (float)0.02   /*speed rising time*/
 #define   CONFIG_KS_2                (float)5.0   /*speed rising time*/
