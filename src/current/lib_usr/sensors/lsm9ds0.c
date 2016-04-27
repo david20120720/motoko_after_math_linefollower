@@ -20,6 +20,10 @@ u32 lsm9ds0_init()
     g_lsm9ds0_imu.gy_ofs = 0;
     g_lsm9ds0_imu.gz_ofs = 0;
 
+    g_lsm9ds0_imu.roll = 0;
+    g_lsm9ds0_imu.pitch = 0;
+    g_lsm9ds0_imu.yaw = 0;
+
 
     g_lsm9ds0_imu.temp = 0;
 
@@ -103,6 +107,7 @@ void lsm9ds0_read()
     tmp = ((u16)i2c_read_reg(LSM9DS0_GYRO_ADDRESS, LSM9DS0_OUT_Z_L_G));
     tmp|= ((u16)i2c_read_reg(LSM9DS0_GYRO_ADDRESS, LSM9DS0_OUT_Z_H_G))<<8;
     g_lsm9ds0_imu.gz = tmp;
+
 
     //read magnetometer
     tmp = ((u16)i2c_read_reg(LSM9DS0_ACC_MAG_ADDRESS, LSM9DS0_OUT_X_L_M));

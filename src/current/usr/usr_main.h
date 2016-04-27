@@ -10,6 +10,8 @@
 thread_stack_t main_thread_stack[THREAD_STACK_SIZE];
 thread_stack_t i2c_sensor_thread_stack[THREAD_STACK_SIZE];
 thread_stack_t line_sensor_thread_stack[THREAD_STACK_SIZE];
+thread_stack_t telemetry_thread_stack[THREAD_STACK_SIZE];
+
 
 void main_thread();
 

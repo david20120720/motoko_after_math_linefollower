@@ -1,0 +1,9 @@
+#ifndef _OPENGL_GUI_ITEMS_H_
+#define _OPENGL_GUI_ITEMS_H_
+
+#include "opengl_gui_item.h"
+#include "opengl_gui_text_field.h"
+#include "opengl_gui_bar_field.h"
+#include "opengl_gui_imu.h"
+
+#endif

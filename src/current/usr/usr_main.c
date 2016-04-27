@@ -14,6 +14,28 @@
 volatile u32 g_error ;
 
 
+void telemetry_thread()
+{
+	u32 i;
+	while (1)
+	{
+		printf_(">>>\n");
+		printf_("%i %i ", g_line_sensor.line_position, g_line_sensor.on_line);
+		printf_("%i %i %i ", g_lsm9ds0_imu.gx, g_lsm9ds0_imu.gy, g_lsm9ds0_imu.gz);
+		printf_("%i %i %i ", g_lsm9ds0_imu.mx, g_lsm9ds0_imu.my, g_lsm9ds0_imu.mz);
+		printf_("%i %i %i ", g_lsm9ds0_imu.ax, g_lsm9ds0_imu.ay, g_lsm9ds0_imu.az);
+		printf_("%i %i %i ", g_lsm9ds0_imu.roll, g_lsm9ds0_imu.pitch, g_lsm9ds0_imu.yaw);
+
+
+		for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
+			printf_("%i ", g_line_sensor.raw_data_dif[i]);
+		printf_("\n");
+
+		timer_delay_ms(1000);
+	}
+}
+
+
 void line_sensor_thread()
 {
 	u32 init_res = line_sensor_init();
@@ -31,27 +53,6 @@ void line_sensor_thread()
  	{
  		event_timer_wait(EVENT_TIMER_0_ID);
 		line_sensor_read(0);
-
-/*
-		u32 i;
-		for (i = 0; i < SENSORS_COUNT; i++)
-			printf_("%i ", g_rgb.ambient[i]);
-		printf_("\n");
-
-		for (i = 0; i < SENSORS_COUNT; i++)
-			printf_("%i ", g_rgb.r[i]);
-		printf_("\n");
-
-		for (i = 0; i < SENSORS_COUNT; i++)
-			printf_("%i ", g_rgb.g[i]);
-		printf_("\n");
-
-		for (i = 0; i < SENSORS_COUNT; i++)
-			printf_("%i ", g_rgb.b[i]);
-		printf_("\n");
-		printf_("\n");
-		printf_("\n");
-*/
  	}
 }
 
@@ -157,6 +158,7 @@ void main_thread()
 
 	create_thread(line_sensor_thread, line_sensor_thread_stack, sizeof(line_sensor_thread_stack), PRIORITY_MAX);
 	create_thread(i2c_sensor_thread, i2c_sensor_thread_stack, sizeof(i2c_sensor_thread_stack), PRIORITY_MAX);
+	create_thread(telemetry_thread, telemetry_thread_stack, sizeof(telemetry_thread_stack), PRIORITY_MAX + 20);
 
 	broken_line_init();
 	obstacle_init();
