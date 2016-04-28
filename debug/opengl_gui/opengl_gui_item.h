@@ -56,6 +56,48 @@ class COpenGLGuiItem
     {
 
     }
+
+    virtual void mouse_click_event(int button, int state, float x, float y)
+    {
+      (void)button;
+      (void)state;
+      (void)x;
+      (void)y;
+      //printf("on click captured > %i %i %f %f\n", button, state, x, y);
+    }
+
+    virtual void keyboard_up_event(unsigned char key, float x, float y)
+    {
+      (void)key;
+      (void)x;
+      (void)y;
+      //printf("keyboard up captured > %c %i %i\n", key, x, y);
+    }
+
+    virtual void keyboard_event(unsigned char key, float x, float y)
+    {
+      (void)key;
+      (void)x;
+      (void)y;
+      //printf("keyboard captured > %c %i %i\n", key, x, y);
+    }
+
+    virtual void special_keyboard_up_event(int key, float x, float y)
+    {
+      (void)key;
+      (void)x;
+      (void)y;
+      //printf("SPECIAL keyboard up captured > %i %i %i\n", key, x, y);
+    }
+
+    virtual void special_keyboard_event(int key, float x, float y)
+    {
+      (void)key;
+      (void)x;
+      (void)y;
+      //printf("SPECIAL keyboard captured > %i %i %i\n", key, x, y);
+    }
+
 };
 
 #endif

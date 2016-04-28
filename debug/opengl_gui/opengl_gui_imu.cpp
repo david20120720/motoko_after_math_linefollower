@@ -1,8 +1,6 @@
 #include "opengl_gui_imu.h"
 
 
-#include "opengl_gui_bar_field.h"
-
 COpenGLGuiImu::COpenGLGuiImu(struct sOpenGLGuiImuParams params, struct sOpenGLGuiImuData *data):COpenGLGuiItem(0, NULL)
 {
   this->params = params;
@@ -15,13 +13,9 @@ COpenGLGuiImu::~COpenGLGuiImu()
 
 }
 
-
-float xrot = 0.0;
-float yrot = 0.0;
-float zrot = 0.0;
-
 void COpenGLGuiImu::process()
 {
+
   struct sFrame frame;
 
   frame.px = params.px;
@@ -45,52 +39,6 @@ void COpenGLGuiImu::process()
   frame.transparent = params.transparent;
 
   plot_frame(frame);
-
-
-  /*
-  u32 j;
-
-  float k = params.height/(params.max_value - params.min_value);
-  float q = params.height - k*params.max_value;
-
-  float x_step = params.width/data->values.size();
-
-  for (j = 0; j < data->values.size(); j++)
-  {
-    float x = params.px - params.width/2.0 + x_step*(j+0.5);
-    float y = params.py;
-
-    float height = (k*data->values[j] + q);
-    float width = x_step*0.75;
-
-    glColor3f(params.bar_color_r, params.bar_color_g, params.bar_color_b);
-    glBegin(GL_QUADS);
-
-    glVertex3f(x - width/2.0 , y - params.height/2.0 + height, params.pz);
-    glVertex3f(x + width/2.0 , y - params.height/2.0 + height, params.pz);
-    glVertex3f(x + width/2.0 , y - params.height/2.0, params.pz);
-    glVertex3f(x - width/2.0 , y - params.height/2.0, params.pz);
-
-    glEnd();
-
-    char str[1024];
-    sprintf(str, "%6.3f", data->values[j]);
-    gl_print(x - (x_step/2.0)*0.75, y - params.height/2.0,
-              1.0,
-              1.0,
-              1.0,
-              params.font,
-              (char*)str);
-  }
-  */
-
-  /*
-  float x0 = frame.px - frame.width/2.0  + 0.25*FRAME_HEIGHT/2.0;
-  float y0 = frame.py + frame.height/2.0 - 1.8*FRAME_WIDHT;
-
-  u32 j, i;
-  */
-
 
   char str[1024];
   float x, y;
@@ -131,6 +79,8 @@ void COpenGLGuiImu::process()
   //  glMatrixMode(GL_MODELVIEW);
             //  glLoadIdentity();
 
+
+              glPushMatrix();
               glTranslated(params.px, params.py, params.pz);
               glRotated(data->roll*180.0/PI, 1, 0, 0);
               glRotated(data->pitch*180.0/PI, 0, 1, 0);
@@ -139,6 +89,15 @@ void COpenGLGuiImu::process()
               glPointSize(3);
               glPolygonMode(GL_FRONT, GL_LINES);
               glPolygonMode(GL_BACK, GL_LINES);
+
+              glBegin(GL_TRIANGLES);
+              glColor3f(params.imu_color_r, params.imu_color_g, params.imu_color_b);
+              glVertex3f(-size/4.0, -size, 0.0);
+              glVertex3f( size/4.0, -size, 0.0);
+              glVertex3f(  0.0, size, 0.0);
+              glEnd();
+
+              /*
               glBegin(GL_QUADS);
 
               glColor3f(0.0f,1.0f,0.0f);	// Color Blue
@@ -178,5 +137,7 @@ void COpenGLGuiImu::process()
               glVertex3f( size,-size,-size);	// Bottom Right Of The Quad (Right)
 
               glEnd();			// End
+              */
 
+    glPopMatrix();
 }

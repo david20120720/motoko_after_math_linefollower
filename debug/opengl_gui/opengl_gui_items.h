@@ -5,5 +5,7 @@
 #include "opengl_gui_text_field.h"
 #include "opengl_gui_bar_field.h"
 #include "opengl_gui_imu.h"
+#include "opengl_gui_graph.h"
+#include "opengl_gui_slider_field.h"
 
 #endif

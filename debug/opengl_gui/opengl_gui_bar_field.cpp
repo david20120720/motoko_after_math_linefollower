@@ -52,7 +52,7 @@ void COpenGLGuiBarField::process()
     float y = params.py;
 
     float height = (k*data->values[j] + q);
-    float width = x_step*0.75;
+    float width = x_step*0.85;
 
     glColor3f(params.bar_color_r, params.bar_color_g, params.bar_color_b);
     glBegin(GL_QUADS);

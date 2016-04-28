@@ -5,14 +5,8 @@
 
 #include "opengl_gui_items.h"
 
-struct sOpenGlGuiIOEvent
-{
-  u32 mouse_x, mouse_y;
-  u32 mouse_buttons;
 
-  u32 keypressed;
-  u32 key;
-};
+
 
 class COpenGLGui
 {
@@ -20,17 +14,35 @@ class COpenGLGui
     u32 width, height;
     std::vector<class COpenGLGuiItem *> *items;
 
+    std::thread *rendering_thread;
+
+    GLuint background_texture;
+
   public:
     COpenGLGui(u32 width, u32 height, std::vector<class COpenGLGuiItem *> *items);
     ~COpenGLGui();
 
-    void process(struct sOpenGlGuiIOEvent *event = NULL);
+    void process();
 
 
   private:
-    void point_rotate(float *x_res, float *y_res, float x, float y, float angle);
     void visualise_init();
     void visualise_refresh();
+
+    void mouse_click_event(int button, int state, int x, int y);
+    void keyboard_up_event(unsigned char key, int x, int y);
+    void keyboard_event(unsigned char key, int x, int y);
+    void special_keyboard_up_event(int key, int x, int y);
+    void special_keyboard_event(int key, int x, int y);
+
+
+  public:
+    static void mouse_click_event_wrapper(int button, int state, int x, int y);
+    static void keyboard_up_event_wrapper(unsigned char key, int x, int y);
+    static void keyboard_event_wrapper(unsigned char key, int x, int y);
+    static void special_keyboard_up_event_wrapper(int key, int x, int y);
+    static void special_keyboard_event_wrapper(int key, int x, int y);
+
 };
 
 #endif

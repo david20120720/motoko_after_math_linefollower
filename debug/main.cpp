@@ -6,9 +6,10 @@
 std::vector<class COpenGLGuiItem *> items;
 
 struct sOpenGLGuiTextFieldData	textfield_terminal_data;
-struct sOpenGLGuiTextFieldData	textfield_controller_data;
+struct sOpenGLGuiSliderFieldData	sliderfield_controller_data;
 struct sOpenGLGuiBarFieldData	  barfield_sensor_data;
-struct sOpenGLGuiImuData			imu_data;
+struct sOpenGLGuiImuData				imu_data;
+struct sOpenGLGuiGraphData			graph_data;
 
 void init_opengl_gui_items()
 {
@@ -17,11 +18,11 @@ void init_opengl_gui_items()
 	struct sOpenGLGuiTextFieldParams	textfield_terminal_param;
 
 	textfield_terminal_param.transparent = true;
-	textfield_terminal_param.px = -0.35;
+	textfield_terminal_param.px = -0.25;
 	textfield_terminal_param.py = -0.3;
 	textfield_terminal_param.pz = 0.0;
 
-	textfield_terminal_param.width = 0.7;
+	textfield_terminal_param.width = 0.9;
 	textfield_terminal_param.height = 0.2;
 
 	textfield_terminal_param.label_font = GLUT_BITMAP_HELVETICA_18;
@@ -31,9 +32,9 @@ void init_opengl_gui_items()
 	textfield_terminal_param.frame_color_g = 0.3;
 	textfield_terminal_param.frame_color_b = 0.3;
 
-	textfield_terminal_param.label_color_r = 1.0;
-	textfield_terminal_param.label_color_g = 0.0;
-	textfield_terminal_param.label_color_b = 0.0;
+	textfield_terminal_param.label_color_r = 0.8;
+	textfield_terminal_param.label_color_g = 0.8;
+	textfield_terminal_param.label_color_b = 0.8;
 
 	textfield_terminal_param.font_color_r = 1.0;
 	textfield_terminal_param.font_color_g = 1.0;
@@ -53,35 +54,62 @@ void init_opengl_gui_items()
 
 
 
-	struct sOpenGLGuiTextFieldParams	textfield_controller_param;
+	struct sOpenGLGuiSliderFieldParams	sliderfield_controller_param;
 
-	textfield_controller_param.transparent = true;
-	textfield_controller_param.px = -0.35;
-	textfield_controller_param.py = -0.0;
-	textfield_controller_param.pz = 0.0;
+	sliderfield_controller_param.transparent = true;
+	sliderfield_controller_param.px = -0.25;
+	sliderfield_controller_param.py = -0.015;
+	sliderfield_controller_param.pz = 0.0;
 
-	textfield_controller_param.width = 0.7;
-	textfield_controller_param.height = 0.2;
+	sliderfield_controller_param.width = 0.9;
+	sliderfield_controller_param.height = 0.29;
 
-	textfield_controller_param.label_font = GLUT_BITMAP_HELVETICA_18;
-	textfield_controller_param.font = GLUT_BITMAP_HELVETICA_10;
+	sliderfield_controller_param.label_font = GLUT_BITMAP_HELVETICA_18;
+	sliderfield_controller_param.font = GLUT_BITMAP_HELVETICA_18;
 
-	textfield_controller_param.frame_color_r = 0.3;
-	textfield_controller_param.frame_color_g = 0.3;
-	textfield_controller_param.frame_color_b = 0.3;
+	sliderfield_controller_param.frame_color_r = 0.3;
+	sliderfield_controller_param.frame_color_g = 0.3;
+	sliderfield_controller_param.frame_color_b = 0.3;
 
-	textfield_controller_param.label_color_r = 1.0;
-	textfield_controller_param.label_color_g = 0.0;
-	textfield_controller_param.label_color_b = 0.0;
+	sliderfield_controller_param.color_r = 0.3;
+	sliderfield_controller_param.color_g = 0.7;
+	sliderfield_controller_param.color_b = 1.0;
 
-	textfield_controller_param.font_color_r = 1.0;
-	textfield_controller_param.font_color_g = 1.0;
-	textfield_controller_param.font_color_b = 1.0;
+	sliderfield_controller_param.font_color_r = 1.0;
+	sliderfield_controller_param.font_color_g = 1.0;
+	sliderfield_controller_param.font_color_b = 1.0;
 
-	textfield_controller_param.frame_label = "controller parameters";
+	sliderfield_controller_param.frame_label = "controller parameters";
 
-	textfield_controller_data.lines.push_back("controller output debug");
-	items.push_back(new COpenGLGuiTextField(textfield_controller_param, &textfield_controller_data));
+	sliderfield_controller_param.min_value = 0.0;
+	sliderfield_controller_param.max_value = 100.0;
+
+
+	struct sSlider slider;
+
+
+	slider.label = "Kp";
+	slider.value = sliderfield_controller_param.max_value*abs_(rnd_());
+	sliderfield_controller_data.sliders.push_back(slider);
+
+	slider.label = "Kd";
+	slider.value = sliderfield_controller_param.max_value*abs_(rnd_());
+	sliderfield_controller_data.sliders.push_back(slider);
+
+	slider.label = "Ks1";
+	slider.value = sliderfield_controller_param.max_value*abs_(rnd_());
+	sliderfield_controller_data.sliders.push_back(slider);
+
+
+	slider.label = "Ks2";
+	slider.value = sliderfield_controller_param.max_value*abs_(rnd_());
+	sliderfield_controller_data.sliders.push_back(slider);
+
+	slider.label = "speed max";
+	slider.value = sliderfield_controller_param.max_value*abs_(rnd_());
+	sliderfield_controller_data.sliders.push_back(slider);
+
+	items.push_back(new COpenGLGuiSliderField(sliderfield_controller_param, &sliderfield_controller_data));
 
 
 
@@ -101,35 +129,90 @@ void init_opengl_gui_items()
 	barfield_sensor_param.label_font = GLUT_BITMAP_HELVETICA_18;
 	barfield_sensor_param.font = GLUT_BITMAP_HELVETICA_10;
 
-	barfield_sensor_param.frame_color_r = 0.3;
-	barfield_sensor_param.frame_color_g = 0.3;
-	barfield_sensor_param.frame_color_b = 0.3;
+	barfield_sensor_param.frame_color_r = 0.7;
+	barfield_sensor_param.frame_color_g = 0.0;
+	barfield_sensor_param.frame_color_b = 0.0;
 
-	barfield_sensor_param.label_color_r = 1.0;
-	barfield_sensor_param.label_color_g = 0.0;
-	barfield_sensor_param.label_color_b = 0.0;
+	barfield_sensor_param.label_color_r = 0.8;
+	barfield_sensor_param.label_color_g = 0.8;
+	barfield_sensor_param.label_color_b = 0.8;
 
-	barfield_sensor_param.bar_color_r = 0.3;
+	barfield_sensor_param.bar_color_r = 0.7;
 	barfield_sensor_param.bar_color_g = 0.0;
-	barfield_sensor_param.bar_color_b = 1.0;
+	barfield_sensor_param.bar_color_b = 0.0;
+
+
 
 	barfield_sensor_param.frame_label = "line sensors";
 
-	barfield_sensor_param.max_value = 700.0; 
+	barfield_sensor_param.max_value = 700.0;
 	barfield_sensor_param.min_value = -700.0;
 	barfield_sensor_param.bars_count = LINE_SENSORS_COUNT;
 	barfield_sensor_param.bars_values = true;
 
 	for (i = 0; i < barfield_sensor_param.bars_count; i++)
-		barfield_sensor_data.values.push_back(0.0);
+		barfield_sensor_data.values.push_back(barfield_sensor_param.max_value*rnd_());
 
 	items.push_back(new COpenGLGuiBarField(barfield_sensor_param, &barfield_sensor_data));
 
 
 
+	struct sOpenGLGuiGraphParams	graph_data_param;
+
+	graph_data_param.transparent = true;
+	graph_data_param.px = 0.37;
+	graph_data_param.py = 0.27;
+	graph_data_param.pz = 0.0;
+
+	graph_data_param.width = 0.7;
+	graph_data_param.height = 0.2;
+
+	graph_data_param.label_font = GLUT_BITMAP_HELVETICA_18;
+	graph_data_param.font =  GLUT_BITMAP_HELVETICA_10;
+
+	graph_data_param.label_color_r = 0.8;
+	graph_data_param.label_color_g = 0.8;
+	graph_data_param.label_color_b = 0.8;
+
+	graph_data_param.frame_color_r = 0.0;
+	graph_data_param.frame_color_g = 0.5;
+	graph_data_param.frame_color_b = 0.8;
+
+	graph_data_param.graph_color_r = 0.0;
+	graph_data_param.graph_color_g = 0.7;
+	graph_data_param.graph_color_b = 1.0;
+
+	graph_data_param.frame_label = "line position";
 
 
+	graph_data_param.x_min = 0.0;
+	graph_data_param.x_max = 100.0;
 
+	graph_data_param.y_max = 256.0;
+	graph_data_param.y_min = -256.0;
+
+
+	graph_data_param.plot_grid = true;
+	graph_data_param.plot_values = true;
+	graph_data_param.plot_labels = true;
+
+
+		u32 j;
+		struct sOpenGlGraphFunction function;
+		function.label = "line position";
+		for (j = 0; j < 100; j++)
+		{
+			struct sOpenGlGraphPoint point;
+
+			point.x = j;
+			point.y = graph_data_param.y_max*rnd_();
+
+			function.points.push_back(point);
+		}
+
+		graph_data.functions.push_back(function);
+
+	items.push_back(new COpenGLGuiGraph(graph_data_param, &graph_data));
 
 
 
@@ -139,12 +222,12 @@ void init_opengl_gui_items()
 	struct sOpenGLGuiImuParams	imu_param;
 
 	imu_param.transparent = true;
-	imu_param.px = 0.4;
-	imu_param.py = 0.12;
+	imu_param.px = 0.47;
+	imu_param.py = -0.135;
 	imu_param.pz = 0.0;
 
 	imu_param.width = 0.5;
-	imu_param.height = 0.5;
+	imu_param.height = 0.53;
 
 	imu_param.label_font = GLUT_BITMAP_HELVETICA_18;
 	imu_param.font = GLUT_BITMAP_HELVETICA_10;
@@ -153,46 +236,68 @@ void init_opengl_gui_items()
 	imu_param.frame_color_g = 0.3;
 	imu_param.frame_color_b = 0.3;
 
-	imu_param.label_color_r = 1.0;
-	imu_param.label_color_g = 0.0;
-	imu_param.label_color_b = 0.0;
+	imu_param.label_color_r = 0.8;
+	imu_param.label_color_g = 0.8;
+	imu_param.label_color_b = 0.8;
 
-	imu_param.imu_color_r = 0.3;
+	imu_param.imu_color_r = 0.7;
 	imu_param.imu_color_g = 0.0;
 	imu_param.imu_color_b = 1.0;
 
 	imu_param.frame_label = "gyroscope";
 	imu_param.angles_values_labels = true;
 
-	imu_data.roll = rnd_()*PI;
-	imu_data.pitch = rnd_()*PI;
+	imu_data.roll = 0.0;
+	imu_data.pitch = 0.0;
 	imu_data.yaw = rnd_()*PI;
 
 	items.push_back(new COpenGLGuiImu(imu_param, &imu_data));
+
+
 }
 
 
 
 int main()
 {
+	u32 i;
 	srand(time(NULL));
 
-
 	class CSerialPort *sp;
-	sp = new CSerialPort((char*)"/dev/ttyUSB0");
-
 	class CParseTelemetry *parse_telemetry;
-	parse_telemetry = new CParseTelemetry();
+
 
 	init_opengl_gui_items();
+
+
 	class COpenGLGui	*opengl_gui;
-	u32 width = 1024;
+	u32 width =  1024;
 	u32 height = (width*9)/16;
+
 	opengl_gui = new COpenGLGui(width, height, &items);
-	opengl_gui->process(NULL);
 
 
-	u32 i;
+	while (getch() != 27)
+	{
+		opengl_gui->process();
+		usleep(1000*100);
+	}
+
+
+	for (i = 0; i < items.size(); i++)
+		delete items[i];
+
+	return 0;
+
+
+	sp = new CSerialPort((char*)"/dev/ttyUSB0");
+	parse_telemetry = new CParseTelemetry();
+	
+
+
+
+
+	u32 ptr = 0;
 	while (getch() != 27)
 	{
 
@@ -205,7 +310,7 @@ int main()
 			struct sRobotTelemetry telemetry = parse_telemetry->get();
 
 			for (i = 0; i < LINE_SENSORS_COUNT; i++)
-				barfield_sensor_data.values[i] = telemetry.line_sensor[i];
+				barfield_sensor_data.values[i] = telemetry.line_sensor[LINE_SENSORS_COUNT - 1 - i];
 
 			imu_data.roll = telemetry.gx*2.0*PI/8192.0;
 			imu_data.pitch = telemetry.gy*2.0*PI/8192.0;
@@ -229,7 +334,12 @@ int main()
 			sprintf(str, "accelerometer  %4i %4i %4i", telemetry.ax, telemetry.ay, telemetry.az);
 			textfield_terminal_data.lines[4] = str;
 
-			opengl_gui->process(NULL);
+
+			graph_data.functions[0].points[ptr].y = telemetry.line_position;
+
+			ptr = (ptr+1)%graph_data.functions[0].points.size();
+
+			opengl_gui->process();
 		}
 	}
 

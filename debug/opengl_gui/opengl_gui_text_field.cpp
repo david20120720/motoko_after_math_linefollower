@@ -38,17 +38,16 @@ void COpenGLGuiTextField::process()
 
   frame.font = params.label_font;
   frame.transparent = params.transparent;
-  
+
   plot_frame(frame);
 
 
   float x0 = frame.px - frame.width/2.0  + 0.25*FRAME_HEIGHT/2.0;
   float y0 = frame.py + frame.height/2.0 - 1.8*FRAME_WIDHT;
 
-  u32 j, i;
+  u32 j;
 
   for (j = 0; j < data->lines.size(); j++)
-//    for (i = 0; i < data->lines[j].size(); i++)
     {
       float x = x0;
       float y = y0 - j*0.03;

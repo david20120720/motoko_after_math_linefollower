@@ -30,6 +30,14 @@ float sgn_(float v)
     return -1.0;
 }
 
+float abs_(float v)
+{
+  if (v < 0.0)
+    return -v;
+
+  return v;
+}
+
 
 
 

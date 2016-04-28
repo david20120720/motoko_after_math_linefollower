@@ -17,13 +17,22 @@ void gl_print(float x, float y, float r, float g, float b, void *font, char *str
 void plot_frame(struct sFrame frame)
 {
     glColor3f(frame.frame_color_r, frame.frame_color_g, frame.frame_color_b);
+  //  glColor3f(frame.font_color_r, frame.font_color_g, font_color_b);
+
 
     float tmp_height = FRAME_HEIGHT;
     float tmp_width = FRAME_WIDHT;
 
+    float k = 0.6;
+    float base = 0.0;
+    float top_color_r = k*frame.frame_color_r + (1.0 - k)*base;
+    float top_color_g = k*frame.frame_color_g + (1.0 - k)*base;
+    float top_color_b = k*frame.frame_color_b + (1.0 - k)*base;
+
 
     glBegin(GL_QUADS);
 
+    glColor3f(frame.frame_color_r, frame.frame_color_g, frame.frame_color_b);
 
     glVertex3f(frame.px - frame.width/2.0 - tmp_width/2.0, frame.py - frame.height/2.0 - 0.25*tmp_height/2.0, frame.pz);
     glVertex3f(frame.px + frame.width/2.0 + tmp_width/2.0, frame.py - frame.height/2.0 - 0.25*tmp_height/2.0, frame.pz);
@@ -31,12 +40,16 @@ void plot_frame(struct sFrame frame)
     glVertex3f(frame.px - frame.width/2.0 - tmp_width/2.0, frame.py - frame.height/2.0, frame.pz);
 
 
+    glColor3f(frame.frame_color_r, frame.frame_color_g, frame.frame_color_b);
     glVertex3f(frame.px - frame.width/2.0 - tmp_width/2.0, frame.py + frame.height/2.0 + 1.5*tmp_height/2.0, frame.pz);
+
+    glColor3f(top_color_r, top_color_g, top_color_b);
     glVertex3f(frame.px + frame.width/2.0 + tmp_width/2.0, frame.py + frame.height/2.0 + 1.5*tmp_height/2.0, frame.pz);
     glVertex3f(frame.px + frame.width/2.0 + tmp_width/2.0, frame.py + frame.height/2.0, frame.pz);
     glVertex3f(frame.px - frame.width/2.0 - tmp_width/2.0, frame.py + frame.height/2.0, frame.pz);
 
 
+    glColor3f(frame.frame_color_r, frame.frame_color_g, frame.frame_color_b);
     glVertex3f(frame.px - frame.width/2.0 - tmp_width/2.0, frame.py + frame.height/2.0, frame.pz);
     glVertex3f(frame.px - frame.width/2.0 - tmp_width/2.0, frame.py - frame.height/2.0, frame.pz);
     glVertex3f(frame.px - frame.width/2.0,                 frame.py - frame.height/2.0, frame.pz);
@@ -51,8 +64,8 @@ void plot_frame(struct sFrame frame)
 
     if (frame.transparent == false)
     {
-      glColor3f(frame.frame_color_r*0.5, frame.frame_color_g*0.5, frame.frame_color_b*0.5);
       glBegin(GL_QUADS);
+      glColor3f(frame.frame_color_r*0.8, frame.frame_color_g*0.8, frame.frame_color_b*0.8);
       glVertex3f(frame.px - frame.width/2.0, frame.py - frame.height/2.0, frame.pz);
       glVertex3f(frame.px + frame.width/2.0, frame.py - frame.height/2.0, frame.pz);
       glVertex3f(frame.px + frame.width/2.0, frame.py + frame.height/2.0, frame.pz);

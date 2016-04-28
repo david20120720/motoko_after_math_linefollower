@@ -12,6 +12,9 @@ float rnd_(float min = -1.0, float max = 1.0);
 
 float sgn_(float v);
 
+float abs_(float v);
+
+
 float vector_max(std::vector<float> v);
 float vector_min(std::vector<float> v);
 float vector_average(std::vector<float> v);
