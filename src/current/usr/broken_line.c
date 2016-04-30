@@ -17,7 +17,7 @@ void broken_line_main()
 
 	i32 tmp = 0;
 
-	while (g_line_sensor.on_line != IR_ON_LINE)
+	while (line_sensor_get()->on_line != LINE_SENSOR_FLAG_ON_LINE)
 	{
 		timer_delay_ms(LINE_SEARCH_TIME_DT);
 
@@ -26,7 +26,7 @@ void broken_line_main()
 			case 0:
 					if (cnt == 0)
 					{
-						if (g_line_sensor.line_position > 0)
+						if (line_sensor_get()->line_position > 0)
 						{
 							motor_left = (0*SPEED_MAX)/100;
 							motor_right = (CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
@@ -47,7 +47,7 @@ void broken_line_main()
 			case 1:
 					if (cnt == 0)
 					{
-						if (g_line_sensor.line_position > 0)
+						if (line_sensor_get()->line_position > 0)
 						{
 							motor_left = (0*SPEED_MAX)/100;
 							motor_right = -(CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
@@ -68,7 +68,7 @@ void broken_line_main()
 			case 2:
 					if (cnt == 0)
 					{
-						if (g_line_sensor.line_position > 0)
+						if (line_sensor_get()->line_position > 0)
 						{
 							motor_left = (CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
 							motor_right = (0*SPEED_MAX)/100;
@@ -89,7 +89,7 @@ void broken_line_main()
 			case 3:
 					if (cnt == 0)
 					{
-						if (g_line_sensor.line_position > 0)
+						if (line_sensor_get()->line_position > 0)
 						{
 							motor_left = -(CONFIG_LINE_SEARCH_SPEED*SPEED_MAX)/100;
 							motor_right = (0*SPEED_MAX)/100;

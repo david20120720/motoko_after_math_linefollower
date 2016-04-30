@@ -51,6 +51,10 @@
 
 #include "../lib_usr.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef i32
 	// typedef signed int i32;		/*32bit signed integer*/
 #endif
@@ -127,5 +131,9 @@ void pid_synthetise(struct sPID *pid, PID_NUM b0, PID_NUM b1,  PID_NUM b2,  PID_
 	err = desired_value - plant_output_value
 */
 PID_NUM pid_process(struct sPID *pid, PID_NUM err);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

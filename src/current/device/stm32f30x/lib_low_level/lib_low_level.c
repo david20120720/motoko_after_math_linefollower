@@ -10,7 +10,7 @@ void lib_low_level_init()
 	#endif
 
 	#ifdef _UART_H_
-	uart_init();  
+	uart_init();
 	#endif
 
 	#ifdef _TIMER_H_
@@ -20,14 +20,14 @@ void lib_low_level_init()
 	#ifdef _PWM_H_
 	pwm_init();
 	#endif
- 
+
 	#ifdef _DRV8834_H_
 	drv8834_init();
 	#endif
 
 	#ifdef _I2C_H_
 	i2c_0_init();
-	#endif 
+	#endif
 
 	#ifdef _ADC_H_
 	// adc_init();

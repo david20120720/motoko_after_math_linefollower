@@ -1,5 +1,8 @@
 #include "camera.h"
 
+
+struct sLineCamera g_camera;
+
 void camera_init()
 {
 		g_camera.state = 0;
@@ -76,6 +79,11 @@ void camera_init()
 		nvicStructure.NVIC_IRQChannelSubPriority = 1;
 		nvicStructure.NVIC_IRQChannelCmd = ENABLE;
 		NVIC_Init(&nvicStructure);
+}
+
+struct sLineCamera* camera_get()
+{
+	return &g_camera;
 }
 
 u32 camera_read()

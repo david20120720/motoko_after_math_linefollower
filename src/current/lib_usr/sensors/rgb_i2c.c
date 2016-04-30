@@ -4,6 +4,9 @@
 
 u8 rgb_raw[RGB_SENSORS_COUNT];
 
+struct sRGBSensor g_rgb;
+
+
 
 void rgb_i2c_delay()
 {
@@ -311,61 +314,64 @@ void rgb_init()
 
 }
 
-
+struct sRGBSensor* rgb_get()
+{
+  return &g_rgb;
+}
 
 void rgb_read()
 {
-	u32 i, r;
+	u32 i;
 
-    rgb_i2cStart();
-    rgb_i2cWrite(RGB_ADDRESS);
-    rgb_i2cWrite(RGB_COMMAND|RGB_CDATAL|(1<<5));
+  rgb_i2cStart();
+  rgb_i2cWrite(RGB_ADDRESS);
+  rgb_i2cWrite(RGB_COMMAND|RGB_CDATAL|(1<<5));
 
-    rgb_i2cStart();
-    rgb_i2cWrite(RGB_ADDRESS|0x01);
+  rgb_i2cStart();
+  rgb_i2cWrite(RGB_ADDRESS|0x01);
 
-    rgb_i2cRead(1, rgb_raw);
-    for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.ambient[i] = rgb_raw[i];
+  rgb_i2cRead(1, rgb_raw);
+  for (i = 0; i < RGB_SENSORS_COUNT; i++)
+      g_rgb.ambient[i] = rgb_raw[i];
 
-    rgb_i2cRead(1, rgb_raw);
-    for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.ambient[i]|= ((u16)rgb_raw[i])<<8;
+  rgb_i2cRead(1, rgb_raw);
+  for (i = 0; i < RGB_SENSORS_COUNT; i++)
+      g_rgb.ambient[i]|= ((u16)rgb_raw[i])<<8;
 
-    rgb_i2cRead(1, rgb_raw);
-    for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.r[i] = rgb_raw[i];
+  rgb_i2cRead(1, rgb_raw);
+  for (i = 0; i < RGB_SENSORS_COUNT; i++)
+      g_rgb.r[i] = rgb_raw[i];
 
-    rgb_i2cRead(1, rgb_raw);
-    for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.r[i]|= ((u16)rgb_raw[i])<<8;
-
-
-    rgb_i2cRead(1, rgb_raw);
-    for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.g[i] = rgb_raw[i];
-
-    rgb_i2cRead(1, rgb_raw);
-    for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.g[i]|= ((u16)rgb_raw[i])<<8;
+  rgb_i2cRead(1, rgb_raw);
+  for (i = 0; i < RGB_SENSORS_COUNT; i++)
+      g_rgb.r[i]|= ((u16)rgb_raw[i])<<8;
 
 
-    rgb_i2cRead(1, rgb_raw);
-    for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.b[i] = rgb_raw[i];
+  rgb_i2cRead(1, rgb_raw);
+  for (i = 0; i < RGB_SENSORS_COUNT; i++)
+      g_rgb.g[i] = rgb_raw[i];
 
-    rgb_i2cRead(1, rgb_raw);
-    for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.b[i]|= ((u16)rgb_raw[i])<<8;
+  rgb_i2cRead(1, rgb_raw);
+  for (i = 0; i < RGB_SENSORS_COUNT; i++)
+      g_rgb.g[i]|= ((u16)rgb_raw[i])<<8;
 
 
-    rgb_i2cRead(1, rgb_raw);
-    for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.proximity[i] = rgb_raw[i];
+  rgb_i2cRead(1, rgb_raw);
+  for (i = 0; i < RGB_SENSORS_COUNT; i++)
+      g_rgb.b[i] = rgb_raw[i];
 
-    rgb_i2cRead(0, rgb_raw);
-    for (i = 0; i < RGB_SENSORS_COUNT; i++)
-        g_rgb.proximity[i]|= ((u16)rgb_raw[i])<<8;
+  rgb_i2cRead(1, rgb_raw);
+  for (i = 0; i < RGB_SENSORS_COUNT; i++)
+      g_rgb.b[i]|= ((u16)rgb_raw[i])<<8;
 
-    rgb_i2cStop();
+
+  rgb_i2cRead(1, rgb_raw);
+  for (i = 0; i < RGB_SENSORS_COUNT; i++)
+      g_rgb.proximity[i] = rgb_raw[i];
+
+  rgb_i2cRead(0, rgb_raw);
+  for (i = 0; i < RGB_SENSORS_COUNT; i++)
+      g_rgb.proximity[i]|= ((u16)rgb_raw[i])<<8;
+
+  rgb_i2cStop();
 }

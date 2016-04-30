@@ -4,9 +4,41 @@
 #include "../lib_usr/lib_usr.h"
 #include "robot_config.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 void obstacle_init();
-void obstacle_rotate_robot(i32 angle);
 void obstacle_main();
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#ifdef __cplusplus
+
+class CObstacle
+{
+	private:
+		u32 state;
+
+	public:
+		CObstacle();
+		~CObstacle();
+
+		void init();
+		void process();
+
+	private:
+		i32 abs_(i32 x);
+
+		void rotate_robot(i32 angle);
+		void go_forward(i32 speed, u32 time, u8 (*term_fun)());
+};
+
+#endif
+
 
 #endif

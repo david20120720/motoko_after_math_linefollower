@@ -2,7 +2,7 @@
 
 
 
-COpenGLGuiSliderField::COpenGLGuiSliderField(struct sOpenGLGuiSliderFieldParams params, struct sOpenGLGuiSliderFieldData *data):COpenGLGuiItem(0, NULL)
+COpenGLGuiSliderField::COpenGLGuiSliderField(struct sOpenGLGuiSliderFieldParams params, struct sOpenGLGuiSliderFieldData *data, i32 motive_id):COpenGLGuiItem(0, NULL, motive_id)
 {
   this->params = params;
   this->data = data;
@@ -22,49 +22,36 @@ COpenGLGuiSliderField::~COpenGLGuiSliderField()
 
 void COpenGLGuiSliderField::process()
 {
-  struct sFrame frame;
+  plot_frame(params.frame);
 
-  frame.px = params.px;
-  frame.py = params.py;
-  frame.pz = params.pz;
-
-  frame.width = params.width;
-  frame.height = params.height;
-
-  frame.frame_color_r = params.frame_color_r;
-  frame.frame_color_g = params.frame_color_g;
-  frame.frame_color_b = params.frame_color_b;
-
-  frame.font_color_r = params.font_color_r;
-  frame.font_color_g = params.font_color_g;
-  frame.font_color_b = params.font_color_b;
-  frame.label = params.frame_label;
-
-  frame.font = params.label_font;
-  frame.transparent = params.transparent;
-
-  plot_frame(frame);
+  float px = params.frame.px;
+  float py = params.frame.py;
+  float pz = params.frame.pz;
+  float width = params.frame.width;
+  float height = params.frame.height;
 
   u32 j;
+
+
 
 
   float x, y;
   for (j = 0; j < data->sliders.size(); j++)
   {
     bool clicked = false;
-    x = params.px - 0.99*params.width/2.0;
-    y = params.py + params.height/2.0 - 0.03 - (params.height*j)/data->sliders.size();
+    x = px - 0.99*width/2.0;
+    y = py + height/2.0 - 0.03 - (height*j)/data->sliders.size();
 
     gl_print(x, y,
               params.font_color_r,
               params.font_color_g,
               params.font_color_b,
-              params.font,
+              params.label_font,
               (char*)data->sliders[j].label.c_str());
 
     char value[256];
 
-    x = params.px - 0.7*params.width/2.0;
+    x = px - 0.7*width/2.0;
     sprintf(value, "%6.3f",data->sliders[j].value);
     gl_print(x, y,
               params.font_color_r,
@@ -75,11 +62,11 @@ void COpenGLGuiSliderField::process()
 
     glColor3f(params.color_r*0.3, params.color_g*0.3, params.color_b*0.3);
 
-    x = params.px - 0.4*params.width/2.0;
-    y = params.py + params.height/2.0 - 0.02 - (params.height*j)/data->sliders.size();
+    x = px - 0.4*width/2.0;
+    y = py + height/2.0 - 0.02 - (height*j)/data->sliders.size();
 
 
-    float slider_width = params.width*0.68;
+    float slider_width = width*0.68;
     float slider_height = 0.02;
 
 
@@ -88,26 +75,26 @@ void COpenGLGuiSliderField::process()
 
 
     glBegin(GL_QUADS);
-    glVertex3f(x - 0.0 , y - slider_height/2.0, params.pz);
-    glVertex3f(x + slider_width, y - slider_height/2.0, params.pz);
-    glVertex3f(x + slider_width, y + slider_height/2.0, params.pz);
-    glVertex3f(x - 0.0 , y + slider_height/2.0, params.pz);
+    glVertex3f(x - 0.0 , y - slider_height/2.0, pz);
+    glVertex3f(x + slider_width, y - slider_height/2.0, pz);
+    glVertex3f(x + slider_width, y + slider_height/2.0, pz);
+    glVertex3f(x - 0.0 , y + slider_height/2.0, pz);
     glEnd();
 
 
     if (mouse_state &&
-        (mouse_x > (x - params.px)) && (mouse_x < (x+slider_width- params.px)) &&
-        (mouse_y > (y-slider_height/2.0 - params.py)) && (mouse_y < (y+slider_height/2.0- params.py))
+        (mouse_x > (x - px)) && (mouse_x < (x+slider_width- px)) &&
+        (mouse_y > (y-slider_height/2.0 - py)) && (mouse_y < (y+slider_height/2.0- py))
        )
     {
       clicked = true;
     }
 
 
-    if (clicked == true)
+    if ((clicked == true) && (params.setable == true))
     {
-      float k = (params.max_value - params.min_value) / ( (x+slider_width- params.px) - (x - params.px));
-      float q = params.max_value - k*(x+slider_width- params.px);
+      float k = (params.max_value - params.min_value) / ( (x+slider_width- px) - (x - px));
+      float q = params.max_value - k*(x+slider_width- px);
 
       data->sliders[j].value = mouse_x*k + q;
 
@@ -124,22 +111,22 @@ void COpenGLGuiSliderField::process()
     glColor3f(params.color_r, params.color_g, params.color_b);
 
     glBegin(GL_QUADS);
-    glVertex3f(x - 0.0 , y - slider_height/2.0, params.pz);
-    glVertex3f(x + slider_active_width, y - slider_height/2.0, params.pz);
-    glVertex3f(x + slider_active_width, y + slider_height/2.0, params.pz);
-    glVertex3f(x - 0.0 , y + slider_height/2.0, params.pz);
+    glVertex3f(x - 0.0 , y - slider_height/2.0, pz);
+    glVertex3f(x + slider_active_width, y - slider_height/2.0, pz);
+    glVertex3f(x + slider_active_width, y + slider_height/2.0, pz);
+    glVertex3f(x - 0.0 , y + slider_height/2.0, pz);
     glEnd();
 
-    if (clicked == true)
+    if ((clicked == true) && (params.setable == true))
       glColor3f(1.0, 1.0, 0.0);
     else
       glColor3f(1.0, 1.0, 1.0);
 
     glBegin(GL_QUADS);
-    glVertex3f(x + slider_active_width - 0.01, y - 1.2*slider_height/2.0, params.pz);
-    glVertex3f(x + slider_active_width, y - 1.2*slider_height/2.0, params.pz);
-    glVertex3f(x + slider_active_width, y + 1.2*slider_height/2.0, params.pz);
-    glVertex3f(x + slider_active_width - 0.01 , y + 1.2*slider_height/2.0, params.pz);
+    glVertex3f(x + slider_active_width - 0.01, y - 1.2*slider_height/2.0, pz);
+    glVertex3f(x + slider_active_width, y - 1.2*slider_height/2.0, pz);
+    glVertex3f(x + slider_active_width, y + 1.2*slider_height/2.0, pz);
+    glVertex3f(x + slider_active_width - 0.01 , y + 1.2*slider_height/2.0, pz);
     glEnd();
 
   }
@@ -159,14 +146,14 @@ void COpenGLGuiSliderField::mouse_click_event(int button, int state, float x, fl
     return;
   }
 
-  x = (x - params.px);
-  y = (y - params.py);
+  x = (x - params.frame.px);
+  y = (y - params.frame.py);
 
   if (
-      (x < -params.width/2.0) ||
-      (x > params.width/2.0) ||
-      (y < -params.height/2.0) ||
-      (y > params.height/2.0)
+      (x < -params.frame.width/2.0) ||
+      (x > params.frame.width/2.0) ||
+      (y < -params.frame.height/2.0) ||
+      (y > params.frame.height/2.0)
     )
     {
       mouse_state = 0;

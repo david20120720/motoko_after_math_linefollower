@@ -4,17 +4,35 @@
 #include "../lib_usr/lib_usr.h"
 #include "robot_config.h"
 
-
-struct sLineFollower
-{
-	float base_speed, base_speed_max;
-	float dif_speed;
-};
-
-struct sLineFollower g_line_follower;
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void line_follower_init();
 void line_follower_main();
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#ifdef __cplusplus
+
+class CLineFollower
+{
+	private:
+		float base_speed, dif_speed;
+		struct sPID line_pid;
+
+	public:
+		CLineFollower();
+		~CLineFollower();
+
+		void init();
+		void process();
+};
+
+#endif
+
 
 #endif

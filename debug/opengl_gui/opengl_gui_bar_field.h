@@ -5,19 +5,14 @@
 
 struct sOpenGLGuiBarFieldParams
 {
-  bool transparent;
-  float px, py, pz;
-  float width, height;
-  void *font, *label_font;
-  float frame_color_r, frame_color_g, frame_color_b;
-  float label_color_r, label_color_g, label_color_b;
-  float bar_color_r, bar_color_g, bar_color_b;
+  struct sFrame frame;
 
-  std::string frame_label;
+  float color_r, color_g, color_b;
 
   float max_value;
   float min_value;
-  u32 bars_count;
+
+  void *font;
 
   bool bars_values;
 };

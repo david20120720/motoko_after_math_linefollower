@@ -7,19 +7,18 @@
 
 
 
-
 class COpenGLGui
 {
   private:
     u32 width, height;
-    std::vector<class COpenGLGuiItem *> *items;
+    std::vector<class CItemsContainer*> *opengl_gui_containers;
 
     std::thread *rendering_thread;
 
     GLuint background_texture;
 
   public:
-    COpenGLGui(u32 width, u32 height, std::vector<class COpenGLGuiItem *> *items);
+    COpenGLGui(u32 width, u32 height, std::vector<class CItemsContainer*> *opengl_gui_containers);
     ~COpenGLGui();
 
     void process();

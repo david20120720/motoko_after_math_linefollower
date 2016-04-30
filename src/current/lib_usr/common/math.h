@@ -3,6 +3,9 @@
 
 #include "../lib_usr.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define mint	float
 
@@ -26,5 +29,8 @@ float m_sqrt(float x);
 float m_atan(float value);
 float m_atan2(float y, float x);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

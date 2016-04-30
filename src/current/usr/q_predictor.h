@@ -4,23 +4,32 @@
 #include "../lib_usr/lib_usr.h"
 #include "robot_config.h"
 
-#define Q_PREDICTOR_MODEL_SIZE		(u32)16
-#define Q_PREDICTOR_MODELS_COUNT	(u32)8
 
-struct sQPredictor
+#define Q_PREDICTOR_MODEL_SIZE      ((u32)16)
+#define Q_PREDICTOR_MODELS_COUNT    ((u32)8)
+
+
+
+#ifdef __cplusplus
+
+class CQPredictor
 {
-	u32 state, prev_state;
+  private:
+    u32 dist_min_idx;
+    float input[Q_PREDICTOR_MODEL_SIZE];
 
-	float input[Q_PREDICTOR_MODEL_SIZE];
-	float models[Q_PREDICTOR_MODELS_COUNT][Q_PREDICTOR_MODEL_SIZE];
+  public:
+    CQPredictor();
+    ~CQPredictor();
 
-	float output[Q_PREDICTOR_MODELS_COUNT], q[Q_PREDICTOR_MODELS_COUNT];
+    void init();
+
+    float process(float input_sample);
+
+    void print();
 };
 
-struct sQPredictor g_q_predictor;
+#endif
 
-void q_predictor_init();
-float q_predictor_process(float input, float output_min, float output_max);
-void q_predictor_print();
 
 #endif

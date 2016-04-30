@@ -5,40 +5,31 @@
 #include "obstacle.h"
 #include "q_predictor.h"
 
-#include "test.h"
 #include "error.h"
+#include "robot_config.h"
+#include "telemetry.h"
+
 
 #define SAMPLIG_PERIOD		(u32)4
 #define I2C_SAMPLIG_PERIOD	(u32)10
 
-volatile u32 g_error ;
+volatile u32 g_error;
+
 
 
 void telemetry_thread()
 {
-	u32 i;
 	while (1)
 	{
-		printf_(">>>\n");
-		printf_("%i %i ", g_line_sensor.line_position, g_line_sensor.on_line);
-		printf_("%i %i %i ", g_lsm9ds0_imu.gx, g_lsm9ds0_imu.gy, g_lsm9ds0_imu.gz);
-		printf_("%i %i %i ", g_lsm9ds0_imu.mx, g_lsm9ds0_imu.my, g_lsm9ds0_imu.mz);
-		printf_("%i %i %i ", g_lsm9ds0_imu.ax, g_lsm9ds0_imu.ay, g_lsm9ds0_imu.az);
-		printf_("%i %i %i ", g_lsm9ds0_imu.roll, g_lsm9ds0_imu.pitch, g_lsm9ds0_imu.yaw);
-
-
-		for (i = 0; i < (RGB_SENSORS_COUNT-1); i++)
-			printf_("%i ", g_line_sensor.raw_data_dif[i]);
-		printf_("\n");
-
-		timer_delay_ms(1000);
+		telemetry_print();
+		timer_delay_ms(100);
 	}
 }
 
 
 void line_sensor_thread()
 {
-	u32 init_res = line_sensor_init();
+	u32 init_res = line_sensor_init(robot_config_get()->line_sensor_treshold, robot_config_get()->obstacle_treshold);
 
 	if (init_res != 0)
 	{
@@ -59,51 +50,19 @@ void line_sensor_thread()
 void i2c_sensor_thread()
 {
 	u32 init_res;
-	#ifdef USE_LSM9DS0
 	init_res = lsm9ds0_init();					/*IMU*/
 	if (init_res != 0)
 	{
 		g_error = 1;
 		abort_error_(ERROR_IMU, init_res);
 	}
-	#endif
-
-	#ifdef USE_L3G4200
-	init_res = l3g4200_init();					/*gyro*/
-	if (init_res != 0)
-	{
-		g_error = 1;
-		abort_error_(ERROR_GYRO, init_res);
-	}
-	#endif
-
-	#ifdef USE_HMC5883
-	init_res = hmc5883_init();					/*compass*/
-	if (init_res != 0)
-	{
-		g_error = 1;
-		abort_error_(ERROR_COMPASS, init_res);
-	}
-	#endif
-
 
  	event_timer_set_period(EVENT_TIMER_1_ID, I2C_SAMPLIG_PERIOD);
 
  	while (1)
  	{
  		event_timer_wait(EVENT_TIMER_1_ID);
-
-		#ifdef USE_LSM9DS0
  		lsm9ds0_read();
-		#endif
-
-		#ifdef USE_L3G4200
-		l3g4200_read();
-		#endif
-
-		#ifdef USE_HMC5883
-		hmc5883_read();
-		#endif
  	}
 }
 
@@ -124,15 +83,16 @@ void line_follower()
 	{
 		event_timer_wait(EVENT_TIMER_2_ID);
 
-		if ( ((g_line_sensor.obstacle_position > OBSTACLE_SENSOR_TRESHOLD) && (g_lsm9ds0_imu.ax > 8000) && (get_mode_jumper() == 0)) ||
-				 ((g_line_sensor.obstacle_position > OBSTACLE_SENSOR_TRESHOLD) && (g_lsm9ds0_imu.ax > 15000) && (get_mode_jumper() == 1)) )
+		if (
+				(line_sensor_get()->obstacle == LINE_SENSOR_FLAG_OBSTACLE) &&
+				(lsm9ds0_get()->ax > 8000)
+			)
 			obstacle_main();
 		else
-		if (g_line_sensor.on_line == IR_ON_LINE)
+		if (line_sensor_get()->on_line == LINE_SENSOR_FLAG_ON_LINE)
 			line_follower_main();
 		else
 			broken_line_main();
-
 
 	 	cnt++;
 	 	if ((cnt%20) == 0)
@@ -156,6 +116,9 @@ void main_thread()
 
 	g_error = 0;
 
+	robot_config_init();
+
+
 	create_thread(line_sensor_thread, line_sensor_thread_stack, sizeof(line_sensor_thread_stack), PRIORITY_MAX);
 	create_thread(i2c_sensor_thread, i2c_sensor_thread_stack, sizeof(i2c_sensor_thread_stack), PRIORITY_MAX);
 	create_thread(telemetry_thread, telemetry_thread_stack, sizeof(telemetry_thread_stack), PRIORITY_MAX + 20);
@@ -165,11 +128,7 @@ void main_thread()
 	#if CONFIG_USE_CAMERA == 1
 	camera_init();
 	#endif
-
-	u32 mode = get_mode_jumper();
-
-	printf_("mode = %u\n", mode);
-
+ 
 	while (1)
 	{
 		if (g_error != 0)
@@ -185,13 +144,6 @@ void main_thread()
 		{
 			timer_delay_ms(1000);
 			line_follower();
-
-			//motor_test();
-		//	line_sensor_test();
-			//sensor_test();
-			//rotation_test();
-	//		imu_test();
-			//camera_test();
 		}
 
 		led_on(LED_0);

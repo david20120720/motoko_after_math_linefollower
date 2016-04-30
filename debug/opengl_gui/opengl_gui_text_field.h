@@ -5,16 +5,10 @@
 
 struct sOpenGLGuiTextFieldParams
 {
-  bool transparent;
-  float px, py, pz;
-  float width, height;
-  void *font, *label_font;
-  float frame_color_r, frame_color_g, frame_color_b;
-  float label_color_r, label_color_g, label_color_b;
+  struct sFrame frame;
+
   float font_color_r, font_color_g, font_color_b;
-
-  std::string frame_label;
-
+  void *font;
 };
 
 

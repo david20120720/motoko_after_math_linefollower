@@ -4,10 +4,17 @@
 #include "mutex.h"
 #include "messages_f.h"
 #include "stdio.h"
+#include "mem.h"
 
-#include "../suzuha_os.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 void lib_os_init();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -16,28 +16,15 @@ void COpenGLGuiGraph::process()
 {
   struct sFrame frame;
 
-  frame.px = params.px;
-  frame.py = params.py;
-  frame.pz = params.pz;
 
-  frame.width = params.width;
-  frame.height = params.height;
 
-  frame.frame_color_r = params.frame_color_r;
-  frame.frame_color_g = params.frame_color_g;
-  frame.frame_color_b = params.frame_color_b;
+  plot_frame(params.frame);
 
-  frame.font_color_r = params.label_color_r;
-  frame.font_color_g = params.label_color_g;
-  frame.font_color_b = params.label_color_b;
-  frame.label = params.frame_label;
-
-  frame.font = params.label_font;
-
-  frame.transparent = params.transparent;
-
-  plot_frame(frame);
-
+  float px = params.frame.px;
+  float py = params.frame.py;
+  float pz = params.frame.pz;
+  float width = params.frame.width;
+  float height = params.frame.height;
 
 
 
@@ -46,11 +33,11 @@ void COpenGLGuiGraph::process()
   float x = 0.0;
   float y = 0.0;
 
-  float ky = params.height/(params.y_max - params.y_min);
-  float qy = params.height*0.5 - ky*params.y_max;
+  float ky = height/(params.y_max - params.y_min);
+  float qy = height*0.5 - ky*params.y_max;
 
-  float kx = params.width/(params.x_max - params.x_min);
-  float qx = params.width*0.5 - kx*params.x_max;
+  float kx = width/(params.x_max - params.x_min);
+  float qx = width*0.5 - kx*params.x_max;
 
   float count = data->functions.size();
   u32 phase = data->functions.size()/3;
@@ -90,55 +77,55 @@ void COpenGLGuiGraph::process()
       x = kx*point.x + qx;
       y = ky*point.y + qy;
 
-      glVertex3f(params.px + x_, params.py + y_, params.pz);
-      glVertex3f(params.px + x, params.py + y, params.pz);
+      glVertex3f(px + x_, py + y_, pz);
+      glVertex3f(px + x, py + y, pz);
     }
     glEnd();
 
   }
 
   glLineWidth(2.0);
-  if ( params.plot_grid == true)
+  if (params.plot_grid == true)
   {
-    glColor3f(params.graph_color_r, params.graph_color_g, params.graph_color_b);
+    glColor3f(params.color_r, params.color_g, params.color_b);
 
     float x0, y0, x1, y1;
 
-    x0 = -params.width/2.0;
-    x1 =  params.width/2.0;
+    x0 = -width/2.0;
+    x1 =  width/2.0;
     y0 = 0.0;
     y1 = 0.0;
 
     glBegin(GL_LINES);
-    glVertex3f(params.px + x0, params.py + y0, params.pz);
-    glVertex3f(params.px + x1, params.py + y1, params.pz);
+    glVertex3f(px + x0, py + y0, pz);
+    glVertex3f(px + x1, py + y1, pz);
     glEnd();
 
 
     x0 = 0.0;
     x1 = 0.0;
-    y0 = -params.height/2.0;
-    y1 =  params.height/2.0;
+    y0 = -height/2.0;
+    y1 =  height/2.0;
 
     glBegin(GL_LINES);
-    glVertex3f(params.px + x0, params.py + y0, params.pz);
-    glVertex3f(params.px + x1, params.py + y1, params.pz);
+    glVertex3f(px + x0, py + y0, pz);
+    glVertex3f(px + x1, py + y1, pz);
     glEnd();
   }
 
-  if ( params.plot_values == true)
+  if (params.plot_values == true)
   {
     char str[1024];
 
-    glColor3f(params.graph_color_r, params.graph_color_g, params.graph_color_b);
+    glColor3f(params.color_r, params.color_g, params.color_b);
 
     float x0, y0;
 
-    x0 = -params.width/2.0;
+    x0 = -width/2.0;
     y0 = -0.02;
 
     sprintf(str, "%6.3f", params.x_min);
-    gl_print(params.px + x0, params.py + y0,
+    gl_print(px + x0, py + y0,
             1.0,
             1.0,
             1.0,
@@ -146,11 +133,11 @@ void COpenGLGuiGraph::process()
             (char*)str);
 
 
-    x0 =  params.width/2.0 - 0.05;
+    x0 =  width/2.0 - 0.05;
     y0 =  -0.02;
 
     sprintf(str, "%6.3f", params.x_max);
-    gl_print(params.px + x0, params.py + y0,
+    gl_print(px + x0, py + y0,
               1.0,
               1.0,
               1.0,
@@ -159,11 +146,11 @@ void COpenGLGuiGraph::process()
 
 
     x0 = 0.01;
-    y0 = -params.height/2.0 + 0.01;
+    y0 = -height/2.0 + 0.01;
 
 
     sprintf(str, "%6.3f", params.y_min);
-    gl_print(params.px + x0, params.py + y0,
+    gl_print(px + x0, py + y0,
               1.0,
               1.0,
               1.0,
@@ -172,10 +159,10 @@ void COpenGLGuiGraph::process()
 
 
     x0 = 0.01;
-    y0 = params.height/2.0 - 0.02;
+    y0 = height/2.0 - 0.02;
 
     sprintf(str, "%6.3f", params.y_max);
-    gl_print(params.px + x0, params.py + y0,
+    gl_print(px + x0, py + y0,
               1.0,
               1.0,
               1.0,
@@ -183,11 +170,11 @@ void COpenGLGuiGraph::process()
               (char*)str);
 
 
-    x0 = 0.001;
+    x0 = 0.01;
     y0 = 0.003;
 
-    sprintf(str, "%6.3f", 0.0);
-    gl_print(params.px + x0, params.py + y0,
+    sprintf(str, "%6.3f", (params.y_min + params.y_max)/2.0);
+    gl_print(px + x0, py + y0,
               1.0,
               1.0,
               1.0,
@@ -195,7 +182,7 @@ void COpenGLGuiGraph::process()
               (char*)str);
   }
 
-  if ( params.plot_labels == true)
+  if (params.plot_labels == true)
   {
     for (j = 0; j < data->functions.size(); j++)
     {
@@ -210,16 +197,16 @@ void COpenGLGuiGraph::process()
         b = 0.0;
       }
 
-      float x = 0.5*params.width/2.0;
-      float y = params.height/2.0 - 0.03 - (0.5*params.height*j)/data->functions.size();
+      float x = 0.5*width/2.0;
+      float y = height/2.0 - 0.03 - (0.5*height*j)/data->functions.size();
 
       char str[1024];
       sprintf(str, "%s", data->functions[j].label.c_str());
-      gl_print(params.px + x, params.py + y,
+      gl_print(px + x, py + y,
                 r,
                 g,
                 b,
-                params.label_font,
+                params.font,
                 (char*)str);
     }
   }
@@ -233,15 +220,15 @@ void COpenGLGuiGraph::mouse_click_event(int button, int state, float x, float y)
   (void)x;
   (void)y;
 
-  x = (x - params.px);
-  y = (y - params.py);
+  x = (x - params.frame.px);
+  y = (y - params.frame.py);
 
 
   if (
-      (x < -params.width/2.0) ||
-      (x > params.width/2.0) ||
-      (y < -params.height/2.0) ||
-      (y > params.height/2.0)
+      (x < -params.frame.width/2.0) ||
+      (x > params.frame.width/2.0) ||
+      (y < -params.frame.height/2.0) ||
+      (y > params.frame.height/2.0)
     )
     return;
 }

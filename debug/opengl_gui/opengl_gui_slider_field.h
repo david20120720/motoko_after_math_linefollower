@@ -5,18 +5,17 @@
 
 struct sOpenGLGuiSliderFieldParams
 {
-  bool transparent;
-  float px, py, pz;
-  float width, height;
-  void *font, *label_font;
-  float frame_color_r, frame_color_g, frame_color_b;
+  struct sFrame frame;
+
   float color_r, color_g, color_b;
   float font_color_r, font_color_g, font_color_b;
-
-  std::string frame_label;
-
   float min_value;
   float max_value;
+
+  void *font;
+  void *label_font;
+
+  bool setable;
 };
 
 struct sSlider
@@ -41,7 +40,7 @@ class COpenGLGuiSliderField: public COpenGLGuiItem
     struct sOpenGLGuiSliderFieldData *data;
 
   public:
-    COpenGLGuiSliderField(struct sOpenGLGuiSliderFieldParams params, struct sOpenGLGuiSliderFieldData *data);
+    COpenGLGuiSliderField(struct sOpenGLGuiSliderFieldParams params, struct sOpenGLGuiSliderFieldData *data, i32 motive_id = -1);
     ~COpenGLGuiSliderField();
     void process();
 

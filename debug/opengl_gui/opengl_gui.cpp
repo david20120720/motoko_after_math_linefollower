@@ -138,7 +138,7 @@ GLuint png_texture_load(const std::string filename, int &width, int &height)
 }
 
 
-COpenGLGui::COpenGLGui(u32 width, u32 height, std::vector<class COpenGLGuiItem *> *items)
+COpenGLGui::COpenGLGui(u32 width, u32 height, std::vector<class CItemsContainer*> *opengl_gui_containers)
 {
   this->width = width;
   this->height = height;
@@ -147,7 +147,7 @@ COpenGLGui::COpenGLGui(u32 width, u32 height, std::vector<class COpenGLGuiItem *
 
   visualise_init();
 
-  this->items = items;
+  this->opengl_gui_containers = opengl_gui_containers;
 }
 
 
@@ -178,11 +178,6 @@ void COpenGLGui::visualise_init()
   glutInitWindowSize(width, height);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
   glutCreateWindow("robot visualise");
-
-/*
-  glutIdleFunc(visualise_idle);
-  glutKeyboardFunc(visualise_process_keys);
-*/
 
   glutMouseFunc(COpenGLGui::mouse_click_event_wrapper);
 
@@ -260,26 +255,10 @@ void COpenGLGui::visualise_refresh()
 
 
   glColor3f(0.0, 0.0, 0.0);
+
   u32 i;
-  for (i = 0; i < items->size(); i++)
-    (*items)[i]->process();
-
-    /*
-  glBegin(GL_LINES);
-  glColor3f(1.0, 0.0, 0.0);
-  glVertex3f(0.0, 0.0, 0.0);
-  glVertex3f(0.5, 0.0, 0.0);
-
-  glColor3f(0.0, 1.0, 0.0);
-  glVertex3f(0.0, 0.0, 0.0);
-  glVertex3f(0.0, 0.2, 0.0);
-
-  glColor3f(0.0, 0.0, 1.0);
-  glVertex3f(0.0, 0.0, 0.0);
-  glVertex3f(0.0, 0.0, 0.5);
-
-  glEnd();
-  */
+  for (i = 0; i < (*opengl_gui_containers).size(); i++)
+    (*opengl_gui_containers)[i]->process();
 
   glutSwapBuffers();
 }
@@ -332,8 +311,9 @@ void COpenGLGui::mouse_click_event(int button, int state, int x, int y)
   float x_ = pos.x*10;
   float y_ = pos.y*10;
 
-  for (i = 0; i < items->size(); i++)
-    (*items)[i]->mouse_click_event(button, state, x_, y_);
+  for (i = 0; i < opengl_gui_containers->size(); i++)
+    (*opengl_gui_containers)[i]->mouse_click_event(button, state, x_, y_);
+
 }
 
 void COpenGLGui::mouse_click_event_wrapper(int button, int state, int x, int y)
@@ -349,8 +329,8 @@ void COpenGLGui::keyboard_up_event(unsigned char key, int x, int y)
   float x_ = ((1.0*x)/width - 0.5)*2.0;
   float y_ = ((1.0*y)/height - 0.5)*2.0;
 
-  for (i = 0; i < items->size(); i++)
-    (*items)[i]->keyboard_up_event(key, x_, y_);
+  for (i = 0; i < opengl_gui_containers->size(); i++)
+    (*opengl_gui_containers)[i]->keyboard_up_event(key, x_, y_);
 }
 
 void COpenGLGui::keyboard_up_event_wrapper(unsigned char key, int x, int y)
@@ -364,8 +344,8 @@ void COpenGLGui::keyboard_event(unsigned char key, int x, int y)
   float x_ = ((1.0*x)/width - 0.5)*2.0;
   float y_ = ((1.0*y)/height - 0.5)*2.0;
 
-  for (i = 0; i < items->size(); i++)
-    (*items)[i]->keyboard_event(key, x_, y_);
+  for (i = 0; i < opengl_gui_containers->size(); i++)
+    (*opengl_gui_containers)[i]->keyboard_event(key, x_, y_);
 }
 
 void COpenGLGui::keyboard_event_wrapper(unsigned char key, int x, int y)
@@ -381,8 +361,9 @@ void COpenGLGui::special_keyboard_up_event(int key, int x, int y)
   float x_ = ((1.0*x)/width - 0.5)*2.0;
   float y_ = ((1.0*y)/height - 0.5)*2.0;
 
-  for (i = 0; i < items->size(); i++)
-    (*items)[i]->special_keyboard_up_event(key, x_, y_);
+
+  for (i = 0; i < opengl_gui_containers->size(); i++)
+    (*opengl_gui_containers)[i]->special_keyboard_up_event(key, x_, y_);
 }
 
 void COpenGLGui::special_keyboard_up_event_wrapper(int key, int x, int y)
@@ -396,8 +377,8 @@ void COpenGLGui::special_keyboard_event(int key, int x, int y)
   float x_ = ((1.0*x)/width - 0.5)*2.0;
   float y_ = ((1.0*y)/height - 0.5)*2.0;
 
-  for (i = 0; i < items->size(); i++)
-    (*items)[i]->special_keyboard_event(key, x_, y_);
+  for (i = 0; i < opengl_gui_containers->size(); i++)
+    (*opengl_gui_containers)[i]->special_keyboard_event(key, x_, y_);
 }
 
 void COpenGLGui::special_keyboard_event_wrapper(int key, int x, int y)

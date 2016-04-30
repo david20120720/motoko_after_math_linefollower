@@ -15,35 +15,19 @@ COpenGLGuiImu::~COpenGLGuiImu()
 
 void COpenGLGuiImu::process()
 {
+  plot_frame(params.frame);
 
-  struct sFrame frame;
+  float px = params.frame.px;
+  float py = params.frame.py;
+  float pz = params.frame.pz;
+  float width = params.frame.width;
+  float height = params.frame.height;
 
-  frame.px = params.px;
-  frame.py = params.py;
-  frame.pz = params.pz;
-
-  frame.width = params.width;
-  frame.height = params.height;
-
-  frame.frame_color_r = params.frame_color_r;
-  frame.frame_color_g = params.frame_color_g;
-  frame.frame_color_b = params.frame_color_b;
-
-  frame.font_color_r = params.label_color_r;
-  frame.font_color_g = params.label_color_g;
-  frame.font_color_b = params.label_color_b;
-  frame.label = params.frame_label;
-
-  frame.font = params.label_font;
-
-  frame.transparent = params.transparent;
-
-  plot_frame(frame);
 
   char str[1024];
   float x, y;
-  x = frame.px - frame.width/2.0  + 0.25*FRAME_HEIGHT/2.0;
-  y = frame.py + frame.height/2.0 - 1.8*FRAME_WIDHT*1;
+  x = px - width/2.0  + 0.25*FRAME_HEIGHT/2.0;
+  y = py + height/2.0 - 1.8*FRAME_WIDHT*1;
 
   sprintf(str, "roll = %6.3f", data->roll);
   gl_print(x, y,
@@ -53,7 +37,7 @@ void COpenGLGuiImu::process()
           params.font,
           (char*)str);
 
-  y = frame.py + frame.height/2.0 - 1.8*FRAME_WIDHT*3;
+  y = py + height/2.0 - 1.8*FRAME_WIDHT*3;
 
   sprintf(str, "pitch = %6.3f", data->pitch);
   gl_print(x, y,
@@ -64,7 +48,7 @@ void COpenGLGuiImu::process()
           (char*)str);
 
 
-  y = frame.py + frame.height/2.0 - 1.8*FRAME_WIDHT*5;
+  y = py + height/2.0 - 1.8*FRAME_WIDHT*5;
 
   sprintf(str, "yaw = %6.3f", data->yaw);
   gl_print(x, y,
@@ -76,12 +60,9 @@ void COpenGLGuiImu::process()
 
     float size = 0.1;
 
-  //  glMatrixMode(GL_MODELVIEW);
-            //  glLoadIdentity();
-
 
               glPushMatrix();
-              glTranslated(params.px, params.py, params.pz);
+              glTranslated(px, py, pz);
               glRotated(data->roll*180.0/PI, 1, 0, 0);
               glRotated(data->pitch*180.0/PI, 0, 1, 0);
               glRotated(data->yaw*180.0/PI, 0, 0, 1);
@@ -91,7 +72,7 @@ void COpenGLGuiImu::process()
               glPolygonMode(GL_BACK, GL_LINES);
 
               glBegin(GL_TRIANGLES);
-              glColor3f(params.imu_color_r, params.imu_color_g, params.imu_color_b);
+              glColor3f(params.color_r, params.color_g, params.color_b);
               glVertex3f(-size/4.0, -size, 0.0);
               glVertex3f( size/4.0, -size, 0.0);
               glVertex3f(  0.0, size, 0.0);

@@ -23,10 +23,11 @@
 
 struct sFrame
 {
+  bool visible;
   bool transparent;
   float px, py, pz;
   float width, height;
-  float frame_color_r, frame_color_g, frame_color_b;
+  float color_r, color_g, color_b;
   float font_color_r, font_color_g, font_color_b;
   void *font;
 
@@ -41,10 +42,11 @@ class COpenGLGuiItem
 {
 
   public:
-    COpenGLGuiItem(u32 params, void *data)
+    COpenGLGuiItem(u32 params, void *data, i32 motive_id = -1)
     {
       (void)params;
       (void)data;
+      (void)motive_id;
     }
 
     virtual ~COpenGLGuiItem()

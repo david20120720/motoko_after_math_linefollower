@@ -3,6 +3,10 @@
 
 #include "../lib_low_level.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SOFTWARE_I2C    1
 // #define HARDWARE_I2C    1
 
@@ -11,7 +15,7 @@
 
 #define RCC_AHBPeriph_GPIO_I2C RCC_AHBPeriph_GPIOB
 
-#define SCL     	6 
+#define SCL     	6
 #define SDA     	7
 #define I2C_GPIO    GPIOB
 
@@ -27,7 +31,12 @@ void i2c_write_reg(u8 dev_addr, u8 reg_addr, u8 data);
 
 void i2cStart();
 void i2cStop();
-int i2cWrite(u8 a); 
+int i2cWrite(u8 a);
 u8 i2cRead(u8  ack);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

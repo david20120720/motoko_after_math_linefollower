@@ -3,7 +3,9 @@
 
 #include "../lib_usr.h"
 
-#define USE_LSM9DS0 1
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct sLSM9DS0IMU
 {
@@ -18,7 +20,6 @@ struct sLSM9DS0IMU
     i16 temp;
 };
 
-struct sLSM9DS0IMU g_lsm9ds0_imu;
 
 
 #define LSM9DS0_ACC_MAG_ADDRESS     0x3C
@@ -111,7 +112,12 @@ struct sLSM9DS0IMU g_lsm9ds0_imu;
 
 
 u32 lsm9ds0_init();
+struct sLSM9DS0IMU* lsm9ds0_get();
 void lsm9ds0_read();
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif

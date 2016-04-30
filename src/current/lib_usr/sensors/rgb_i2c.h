@@ -3,6 +3,10 @@
 
 #include "../lib_usr.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 #define RGB_SENSORS_COUNT		(8+1)
 
@@ -15,8 +19,6 @@ struct sRGBSensor
 	i16 ambient[RGB_SENSORS_COUNT];
 	i16 proximity[RGB_SENSORS_COUNT];
 };
-
-struct sRGBSensor g_rgb;
 
 
 
@@ -83,7 +85,12 @@ void rgb_i2c_write_reg(u8 dev_adr, u8 reg_adr, u8 value);
 void rgb_i2c_read_reg(u8 dev_adr, u8 reg_adr, u8 *res);
 
 void rgb_init();
-
+struct sRGBSensor* rgb_get();
 void rgb_read();
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

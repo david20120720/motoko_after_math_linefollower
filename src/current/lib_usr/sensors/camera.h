@@ -3,6 +3,10 @@
 
 #include "../lib_usr.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define LINE_CAMERA_AO	 		(1<<12)		/*PB12*/
 #define LINE_CAMERA_A_CH    (ADC_Channel_3)				/*ADC4 channel 3*/
 
@@ -23,10 +27,15 @@ struct sLineCamera
 	i16 pixels[LINE_CAMERA_PIXELS_COUNT];
 };
 
-struct sLineCamera g_camera;
 
 
 void camera_init();
+struct sLineCamera* camera_get();
 u32 camera_read();
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

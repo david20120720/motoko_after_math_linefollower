@@ -17,56 +17,44 @@ void COpenGLGuiBarField::process()
 {
   struct sFrame frame;
 
-  frame.px = params.px;
-  frame.py = params.py;
-  frame.pz = params.pz;
 
-  frame.width = params.width;
-  frame.height = params.height;
+  plot_frame(params.frame);
 
-  frame.frame_color_r = params.frame_color_r;
-  frame.frame_color_g = params.frame_color_g;
-  frame.frame_color_b = params.frame_color_b;
 
-  frame.font_color_r = params.label_color_r;
-  frame.font_color_g = params.label_color_g;
-  frame.font_color_b = params.label_color_b;
-  frame.label = params.frame_label;
-
-  frame.font = params.label_font;
-
-  frame.transparent = params.transparent;
-
-  plot_frame(frame);
+  float px = params.frame.px;
+  float py = params.frame.py;
+  float pz = params.frame.pz;
+  float width = params.frame.width;
+  float height = params.frame.height;
 
   u32 j;
 
-  float k = params.height/(params.max_value - params.min_value);
-  float q = params.height - k*params.max_value;
+  float k = height/(params.max_value - params.min_value);
+  float q = height - k*params.max_value;
 
-  float x_step = params.width/data->values.size();
+  float x_step = width/data->values.size();
 
   for (j = 0; j < data->values.size(); j++)
   {
-    float x = params.px - params.width/2.0 + x_step*(j+0.5);
-    float y = params.py;
+    float x = px - width/2.0 + x_step*(j+0.5);
+    float y = py;
 
-    float height = (k*data->values[j] + q);
-    float width = x_step*0.85;
+    float height_ = (k*data->values[j] + q);
+    float width_ = x_step*0.85;
 
-    glColor3f(params.bar_color_r, params.bar_color_g, params.bar_color_b);
+    glColor3f(params.color_r, params.color_g, params.color_b);
     glBegin(GL_QUADS);
 
-    glVertex3f(x - width/2.0 , y - params.height/2.0 + height, params.pz);
-    glVertex3f(x + width/2.0 , y - params.height/2.0 + height, params.pz);
-    glVertex3f(x + width/2.0 , y - params.height/2.0, params.pz);
-    glVertex3f(x - width/2.0 , y - params.height/2.0, params.pz);
+    glVertex3f(x - width_/2.0 , y - height/2.0 + height_, pz);
+    glVertex3f(x + width_/2.0 , y - height/2.0 + height_, pz);
+    glVertex3f(x + width_/2.0 , y - height/2.0, pz);
+    glVertex3f(x - width_/2.0 , y - height/2.0, pz);
 
     glEnd();
 
     char str[1024];
     sprintf(str, "%6.3f", data->values[j]);
-    gl_print(x - (x_step/2.0)*0.75, y - params.height/2.0,
+    gl_print(x - (x_step/2.0)*0.75, y - height/2.0,
               1.0,
               1.0,
               1.0,

@@ -6,16 +6,10 @@
 
 struct sOpenGLGuiImuParams
 {
-  bool transparent;
-  float px, py, pz;
-  float width, height;
-  void *font, *label_font;
-  float frame_color_r, frame_color_g, frame_color_b;
-  float label_color_r, label_color_g, label_color_b;
-  float imu_color_r, imu_color_g, imu_color_b;
+  struct sFrame frame;
 
-  std::string frame_label;
-
+  void *font;
+  float color_r, color_g, color_b;
   bool angles_values_labels;
 };
 

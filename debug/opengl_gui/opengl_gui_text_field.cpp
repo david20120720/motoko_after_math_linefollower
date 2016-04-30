@@ -18,34 +18,20 @@ COpenGLGuiTextField::~COpenGLGuiTextField()
 
 void COpenGLGuiTextField::process()
 {
-  struct sFrame frame;
+  plot_frame(params.frame);
 
-  frame.px = params.px;
-  frame.py = params.py;
-  frame.pz = params.pz;
-
-  frame.width = params.width;
-  frame.height = params.height;
-
-  frame.frame_color_r = params.frame_color_r;
-  frame.frame_color_g = params.frame_color_g;
-  frame.frame_color_b = params.frame_color_b;
-
-  frame.font_color_r = params.label_color_r;
-  frame.font_color_g = params.label_color_g;
-  frame.font_color_b = params.label_color_b;
-  frame.label = params.frame_label;
-
-  frame.font = params.label_font;
-  frame.transparent = params.transparent;
-
-  plot_frame(frame);
+  float px = params.frame.px;
+  float py = params.frame.py;
+  float pz = params.frame.pz;
+  float width = params.frame.width;
+  float height = params.frame.height;
 
 
-  float x0 = frame.px - frame.width/2.0  + 0.25*FRAME_HEIGHT/2.0;
-  float y0 = frame.py + frame.height/2.0 - 1.8*FRAME_WIDHT;
 
-  u32 j;
+  float x0 = px - width/2.0  + 0.25*FRAME_HEIGHT/2.0;
+  float y0 = py + height/2.0 - 1.8*FRAME_WIDHT;
+
+  u32 j; 
 
   for (j = 0; j < data->lines.size(); j++)
     {

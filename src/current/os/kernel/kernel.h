@@ -20,6 +20,11 @@
 
 #include "../suzuha_os.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #define SCHED_PRIORITY  1
 
 /**
@@ -218,5 +223,9 @@ void join(u32 thread_id);
 
 
 void null_thread();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

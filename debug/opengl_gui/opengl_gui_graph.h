@@ -6,23 +6,17 @@
 
 struct sOpenGLGuiGraphParams
 {
-  bool transparent;
-  float px, py, pz;
-  float width, height;
-  void *font, *label_font;
-  float frame_color_r, frame_color_g, frame_color_b;
-  float label_color_r, label_color_g, label_color_b;
-  float graph_color_r, graph_color_g, graph_color_b;
+  struct sFrame frame;
 
-  std::string frame_label;
+  float color_r, color_g, color_b;
 
   float x_min, x_max;
   float y_min, y_max;
-
-
   bool plot_grid;
   bool plot_values;
   bool plot_labels;
+
+  void *font;
 };
 
 
