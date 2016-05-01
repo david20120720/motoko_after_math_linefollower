@@ -6,7 +6,7 @@
 
 
 #define Q_PREDICTOR_MODEL_SIZE      ((u32)16)
-#define Q_PREDICTOR_MODELS_COUNT    ((u32)8)
+#define Q_PREDICTOR_MODELS_COUNT    ((u32)25)
 
 
 

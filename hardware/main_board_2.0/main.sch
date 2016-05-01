@@ -16804,6 +16804,9 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <part name="P+3" library="supply1" deviceset="VCC" device=""/>
 <part name="H1" library="holes" deviceset="MOUNT-HOLE" device="2.8"/>
 <part name="H2" library="holes" deviceset="MOUNT-HOLE" device="2.8"/>
+<part name="I2C_EXT" library="con-lstb" deviceset="MA04-1" device=""/>
+<part name="GND39" library="supply1" deviceset="GND" device=""/>
+<part name="+3V24" library="supply1" deviceset="+3V3" device=""/>
 <part name="SV2" library="con-lsta" deviceset="FE07-2" device=""/>
 <part name="C15" library="resistor" deviceset="C-EU" device="C0805" value="100n"/>
 <part name="+3V25" library="supply1" deviceset="+3V3" device=""/>
@@ -16857,6 +16860,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <text x="193.04" y="-55.88" size="1.778" layer="94">POWER SUPPLY</text>
 <wire x1="190.5" y1="-63.5" x2="340.36" y2="-63.5" width="0.8128" layer="94" style="longdash"/>
 <wire x1="340.36" y1="-63.5" x2="340.36" y2="-116.84" width="0.8128" layer="94" style="longdash"/>
+<wire x1="340.36" y1="-116.84" x2="190.5" y2="-116.84" width="0.8128" layer="94" style="longdash"/>
 <wire x1="190.5" y1="-116.84" x2="190.5" y2="-63.5" width="0.8128" layer="94" style="longdash"/>
 <text x="195.58" y="-111.76" size="1.778" layer="94">CONTROLL</text>
 <wire x1="345.44" y1="132.08" x2="553.72" y2="132.08" width="0.8128" layer="94" style="longdash"/>
@@ -16961,6 +16965,9 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <instance part="P+3" gate="VCC" x="205.74" y="88.9"/>
 <instance part="H1" gate="G$1" x="533.4" y="-78.74"/>
 <instance part="H2" gate="G$1" x="533.4" y="-86.36"/>
+<instance part="I2C_EXT" gate="1" x="355.6" y="7.62"/>
+<instance part="GND39" gate="1" x="370.84" y="-2.54"/>
+<instance part="+3V24" gate="G$1" x="370.84" y="15.24"/>
 <instance part="SV2" gate="G$1" x="520.7" y="106.68"/>
 <instance part="C15" gate="G$1" x="436.88" y="10.16"/>
 <instance part="+3V25" gate="G$1" x="436.88" y="17.78"/>
@@ -16988,7 +16995,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <instance part="R5" gate="G$1" x="421.64" y="-86.36" rot="R270"/>
 <instance part="R17" gate="G$1" x="429.26" y="-86.36" rot="R270"/>
 <instance part="+3V26" gate="G$1" x="429.26" y="-93.98" rot="MR180"/>
-<instance part="D1" gate="G$1" x="287.02" y="22.86"/>
+<instance part="D1" gate="G$1" x="264.16" y="12.7"/>
 <instance part="SV3" gate="G$1" x="502.92" y="73.66" rot="R270"/>
 <instance part="GND57" gate="1" x="497.84" y="60.96"/>
 <instance part="+3V20" gate="G$1" x="500.38" y="55.88" rot="R180"/>
@@ -17182,6 +17189,12 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <wire x1="279.4" y1="48.26" x2="279.4" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="279.4" y1="45.72" x2="276.86" y2="45.72" width="0.1524" layer="91"/>
 <junction x="276.86" y="45.72"/>
+</segment>
+<segment>
+<pinref part="I2C_EXT" gate="1" pin="1"/>
+<pinref part="GND39" gate="1" pin="GND"/>
+<wire x1="363.22" y1="2.54" x2="370.84" y2="2.54" width="0.1524" layer="91"/>
+<wire x1="370.84" y1="2.54" x2="370.84" y2="0" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="SV2" gate="G$1" pin="12"/>
@@ -17400,6 +17413,12 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <wire x1="241.3" y1="7.62" x2="241.3" y2="17.78" width="0.1524" layer="91"/>
 </segment>
 <segment>
+<pinref part="+3V24" gate="G$1" pin="+3V3"/>
+<pinref part="I2C_EXT" gate="1" pin="2"/>
+<wire x1="363.22" y1="5.08" x2="370.84" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="370.84" y1="5.08" x2="370.84" y2="12.7" width="0.1524" layer="91"/>
+</segment>
+<segment>
 <pinref part="SV2" gate="G$1" pin="14"/>
 <wire x1="528.32" y1="114.3" x2="533.4" y2="114.3" width="0.1524" layer="91"/>
 <label x="535.94" y="114.3" size="1.778" layer="95"/>
@@ -17469,6 +17488,11 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <label x="462.28" y="55.88" size="1.778" layer="95"/>
 </segment>
 <segment>
+<pinref part="I2C_EXT" gate="1" pin="3"/>
+<wire x1="363.22" y1="7.62" x2="381" y2="7.62" width="0.1524" layer="91"/>
+<label x="383.54" y="7.62" size="1.778" layer="95"/>
+</segment>
+<segment>
 <pinref part="U3" gate="G$1" pin="SCL"/>
 <wire x1="416.56" y1="-50.8" x2="426.72" y2="-50.8" width="0.1524" layer="91"/>
 <label x="429.26" y="-50.8" size="1.778" layer="95"/>
@@ -17487,6 +17511,11 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <pinref part="U2" gate="A" pin="PB7"/>
 <wire x1="449.58" y1="53.34" x2="459.74" y2="53.34" width="0.1524" layer="91"/>
 <label x="462.28" y="53.34" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="I2C_EXT" gate="1" pin="4"/>
+<wire x1="363.22" y1="10.16" x2="381" y2="10.16" width="0.1524" layer="91"/>
+<label x="383.54" y="10.16" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="U3" gate="G$1" pin="SDA"/>
@@ -17720,9 +17749,9 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <label x="226.06" y="-20.32" size="1.778" layer="95" rot="R180"/>
 </segment>
 <segment>
-<label x="309.88" y="22.86" size="1.778" layer="95"/>
+<label x="284.48" y="12.7" size="1.778" layer="95"/>
 <pinref part="D1" gate="G$1" pin="C"/>
-<wire x1="289.56" y1="22.86" x2="307.34" y2="22.86" width="0.1524" layer="91"/>
+<wire x1="266.7" y1="12.7" x2="281.94" y2="12.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$1" class="0">
@@ -17967,8 +17996,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <junction x="256.54" y="12.7"/>
 <pinref part="C13" gate="G$1" pin="1"/>
 <pinref part="D1" gate="G$1" pin="A"/>
-<wire x1="284.48" y1="22.86" x2="256.54" y2="22.86" width="0.1524" layer="91"/>
-<wire x1="256.54" y1="22.86" x2="256.54" y2="12.7" width="0.1524" layer="91"/>
+<wire x1="261.62" y1="12.7" x2="256.54" y2="12.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SWCLK" class="0">

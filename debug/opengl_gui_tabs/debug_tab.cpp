@@ -89,7 +89,7 @@ void container_debug_tab_init(class CItemsContainer *container)
   sliderfield_controller_param.font_color_b = 1.0;
 
   sliderfield_controller_param.min_value = 0.0;
-  sliderfield_controller_param.max_value = 100.0;
+  sliderfield_controller_param.max_value = 1.0;
 
   sliderfield_controller_param.setable = false;
 
@@ -100,16 +100,16 @@ void container_debug_tab_init(class CItemsContainer *container)
   slider.value = sliderfield_controller_param.max_value*abs_(rnd_());
   debug_tab_sliderfield_controller_data.sliders.push_back(slider);
 
-  slider.label = "Kd";
+  slider.label = "Ki";
   slider.value = sliderfield_controller_param.max_value*abs_(rnd_());
   debug_tab_sliderfield_controller_data.sliders.push_back(slider);
 
-  slider.label = "Ks1";
+  slider.label = "Kdx0.1";
   slider.value = sliderfield_controller_param.max_value*abs_(rnd_());
   debug_tab_sliderfield_controller_data.sliders.push_back(slider);
 
 
-  slider.label = "Ks2";
+  slider.label = "Kd2x0.1";
   slider.value = sliderfield_controller_param.max_value*abs_(rnd_());
   debug_tab_sliderfield_controller_data.sliders.push_back(slider);
 

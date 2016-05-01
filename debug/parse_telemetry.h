@@ -6,25 +6,49 @@
 #define TELEMETRY_BUFFER_SIZE   ((u32)1024)
 #define LINE_SENSORS_COUNT  (u32)8
 
-struct sRobotTelemetry
+
+// printf_(">>>L ");
+struct sRobotLineTelemetry
 {
-    i32 line_sensor[LINE_SENSORS_COUNT];
-    i32 line_sensor_ambient[LINE_SENSORS_COUNT];
-    i32 line_sensor_red[LINE_SENSORS_COUNT];
-    i32 line_sensor_green[LINE_SENSORS_COUNT];
-    i32 line_sensor_blue[LINE_SENSORS_COUNT];
+  i32 on_line;
+  i32 line_position;
+  i32 line_sensor_treshold;
 
-    i32 obstacle;
-    i32 line_treshold;
-    i32 obstacle_treshold;
+  i32 obstacle;
+  i32 obstacle_position;
+  i32 obstacle_treshold;
+};
+
+// printf_(">>>I ");
+struct sRobotIMUTelemetry
+{
+  i32 gx, gy, gz;
+  i32 mx, my, mz;
+  i32 ax, ay, az;
+  i32 roll, pitch, yaw;
+};
 
 
-    i32 line_position, line_state;
-    i32 gx, gy, gz, mx, my, mz, ax, ay, az;
-    i32 roll, pitch, yaw;
+// printf_(">>S ");
+struct sRobotRGBTelemetry
+{
+  i32 dif[LINE_SENSORS_COUNT];
+  i32 ambient[LINE_SENSORS_COUNT];
+  i32 r[LINE_SENSORS_COUNT];
+  i32 g[LINE_SENSORS_COUNT];
+  i32 b[LINE_SENSORS_COUNT];
+};
 
 
-    i32 kp, kd, ks1, ks2, speed_min, speed_max;
+
+//printf_(">>C ");
+struct sRobotControllTelemetry
+{
+  i32 line_sensor_treshold, obstacle_treshold, use_predictor;
+
+  i32 kp, ki, kd, kd2;
+  i32 ks1, ks2, speed_min, speed_max;
+  i32 line_search_time, line_search_speed;
 };
 
 
@@ -35,7 +59,10 @@ class CParseTelemetry
       char buffer[TELEMETRY_BUFFER_SIZE];
       u32 buffer_ptr;
 
-      struct sRobotTelemetry telemetry;
+      struct sRobotLineTelemetry      line_telemetry;
+      struct sRobotIMUTelemetry       imu_telemetry;
+      struct sRobotRGBTelemetry       rgb_telemetry;
+      struct sRobotControllTelemetry  controll_telemetry;
 
   public:
     CParseTelemetry();
@@ -44,7 +71,15 @@ class CParseTelemetry
 
     void print();
 
-    struct sRobotTelemetry get();
+    struct sRobotLineTelemetry get_line_telemetry();
+    struct sRobotIMUTelemetry get_imu_telemetry();
+    struct sRobotRGBTelemetry get_rgb_telemetry();
+    struct sRobotControllTelemetry get_controll_telemetry();
+
+    void clear_buffer();
+    bool buffer_is(char c);
+
+
 };
 
 #endif

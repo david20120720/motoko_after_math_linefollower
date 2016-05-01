@@ -91,8 +91,8 @@ void container_sensors_tab_init(class CItemsContainer *container)
   barfield_sensor_param.color_g = 0.7;
   barfield_sensor_param.color_b = 0.7;
 
-  barfield_sensor_param.max_value = 4096.0;
-  barfield_sensor_param.min_value = 0.0;
+  barfield_sensor_param.max_value = 200.0;
+  barfield_sensor_param.min_value = -200.0;
   barfield_sensor_param.bars_values = true;
 
   for (i = 0; i < 8; i++)
@@ -145,8 +145,8 @@ void container_sensors_tab_init(class CItemsContainer *container)
   barfield_sensor_param.color_g = 0.0;
   barfield_sensor_param.color_b = 0.0;
 
-  barfield_sensor_param.max_value = 4096.0;
-  barfield_sensor_param.min_value = 0.0;
+  barfield_sensor_param.max_value = 200.0;
+  barfield_sensor_param.min_value = -200.0;
   barfield_sensor_param.bars_values = true;
 
   for (i = 0; i < 8; i++)
@@ -197,8 +197,8 @@ void container_sensors_tab_init(class CItemsContainer *container)
   barfield_sensor_param.color_g = 0.8;
   barfield_sensor_param.color_b = 0.0;
 
-  barfield_sensor_param.max_value = 4096.0;
-  barfield_sensor_param.min_value = 0.0;
+  barfield_sensor_param.max_value = 200.0;
+  barfield_sensor_param.min_value = -200.0;
   barfield_sensor_param.bars_values = true;
 
   for (i = 0; i < 8; i++)
@@ -248,8 +248,8 @@ void container_sensors_tab_init(class CItemsContainer *container)
   barfield_sensor_param.color_g = 0.0;
   barfield_sensor_param.color_b = 0.8;
 
-  barfield_sensor_param.max_value = 4096.0;
-  barfield_sensor_param.min_value = 0.0;
+  barfield_sensor_param.max_value = 200.0;
+  barfield_sensor_param.min_value = -200.0;
   barfield_sensor_param.bars_values = true;
 
   for (i = 0; i < 8; i++)
@@ -301,7 +301,7 @@ void container_sensors_tab_init(class CItemsContainer *container)
   graph_data_param.x_min = 0.0;
   graph_data_param.x_max = 100.0;
 
-  graph_data_param.y_max = 4096.0;
+  graph_data_param.y_max = 1024.0;
   graph_data_param.y_min = 0.0;
 
 
@@ -320,17 +320,19 @@ void container_sensors_tab_init(class CItemsContainer *container)
       struct sOpenGlGraphPoint point;
 
       point.x = j;
-      point.y = abs_(graph_data_param.y_max*rnd_());
+      point.y = 0.0;
 
       function.points.push_back(point);
     }
 
     sensors_tab_obstacle_sensor_data.functions.push_back(function);
 
-  container->add(new COpenGLGuiGraph(graph_data_param, &sensors_tab_obstacle_sensor_data));
-
-
-
+    /*
+    function.label = "detected";
+    sensors_tab_obstacle_sensor_data.functions.push_back(function);
+    */
+    
+    container->add(new COpenGLGuiGraph(graph_data_param, &sensors_tab_obstacle_sensor_data));
 
 
   struct sOpenGLGuiSliderFieldParams	sliderfield_controller_param;
@@ -368,8 +370,8 @@ void container_sensors_tab_init(class CItemsContainer *container)
   sliderfield_controller_param.font_color_g = 1.0;
   sliderfield_controller_param.font_color_b = 1.0;
 
-  sliderfield_controller_param.min_value = 0.0;
-  sliderfield_controller_param.max_value = 100.0;
+  sliderfield_controller_param.min_value = -800.0;
+  sliderfield_controller_param.max_value = 800.0;
   sliderfield_controller_param.setable = false;
 
     struct sSlider slider;

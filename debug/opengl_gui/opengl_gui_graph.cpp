@@ -55,6 +55,7 @@ void COpenGLGuiGraph::process()
       b = 0.0;
     }
 
+
     glColor3f(r, g, b);
 
     std::string label = data->functions[j].label;

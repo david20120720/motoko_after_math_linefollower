@@ -8,15 +8,27 @@
 #include "opengl_gui_tabs/sensors_tab.h"
 #include "opengl_gui_tabs/setup_tab.h"
 
+#include <thread>
+
 
 
 extern struct sOpenGLGuiButtonFieldData	menu_data;
+
 
 extern struct sOpenGLGuiTextFieldData	debug_tab_textfield_terminal_data;
 extern struct sOpenGLGuiSliderFieldData	debug_tab_sliderfield_controller_data;
 extern struct sOpenGLGuiBarFieldData	  debug_tab_barfield_sensor_data;
 extern struct sOpenGLGuiImuData				debug_tab_imu_data;
 extern struct sOpenGLGuiGraphData			debug_tab_graph_data;
+
+
+extern struct sOpenGLGuiBarFieldData	  sensors_tab_line_sensor_data;
+extern struct sOpenGLGuiBarFieldData	  sensors_tab_ambient_sensor_data;
+extern struct sOpenGLGuiBarFieldData	  sensors_tab_red_sensor_data;
+extern struct sOpenGLGuiBarFieldData	  sensors_tab_green_sensor_data;
+extern struct sOpenGLGuiBarFieldData	  sensors_tab_blue_sensor_data;
+extern struct sOpenGLGuiGraphData	    	sensors_tab_obstacle_sensor_data;
+extern struct sOpenGLGuiSliderFieldData	sensors_tab_treshold_sensor_data;
 
 
 
@@ -46,13 +58,11 @@ void gui_uninit()
 }
 
 
-int main()
+void gui_thread()
 {
-	u32 i;
-	srand(time(NULL));
-
-
 	class COpenGLGui	*opengl_gui;
+
+	u32 i;
 	u32 width =  1024;
 	u32 height = (width*9)/16;
 
@@ -60,30 +70,8 @@ int main()
 	opengl_gui = new COpenGLGui(width, height, &opengl_gui_containers);
 
 
-
-	class CSerialPort *sp;
-	class CParseTelemetry *parse_telemetry;
-
-
-
-	sp = new CSerialPort((char*)"/dev/ttyUSB0");
-	parse_telemetry = new CParseTelemetry();
-
-
 	while (getch() != 27)
-	{/*
-		char c = sp->serial_read();
-
-		if (parse_telemetry->parse(c) != 0)
-		{
-			parse_telemetry->print();
-
-			struct sRobotTelemetry telemetry = parse_telemetry->get();
-
-			for (i = 0; i < debug_tab_barfield_sensor_data.values.size(); i++)
-			debug_tab_barfield_sensor_data.values[i] = telemetry.line_sensor[i];
-		}
-*/
+	{
 		if (menu_data.buttons[0].flag)
 		{
 			for (i = 0; i < opengl_gui_containers.size()-1; i++)
@@ -123,72 +111,118 @@ int main()
 
 	delete opengl_gui;
 	gui_uninit();
+}
+
+int main()
+{
+	u32 i;
+	srand(time(NULL));
+
+	std::thread c_gui_thread(gui_thread);
+
+	class CSerialPort *sp;
+	class CParseTelemetry *parse_telemetry;
 
 
-/*
+
 	sp = new CSerialPort((char*)"/dev/ttyUSB0");
 	parse_telemetry = new CParseTelemetry();
 
+	u32 line_data_graph_ptr = 0;
+	u32 obstacle_data_graph_ptr = 0;
 
-
-
-
-	u32 ptr = 0;
+	float yaw = 0.0;
 	while (getch() != 27)
 	{
-
 		char c = sp->serial_read();
 
 		if (parse_telemetry->parse(c) != 0)
 		{
 			parse_telemetry->print();
 
-			struct sRobotTelemetry telemetry = parse_telemetry->get();
 
-			for (i = 0; i < LINE_SENSORS_COUNT; i++)
-				barfield_sensor_data.values[i] = telemetry.line_sensor[LINE_SENSORS_COUNT - 1 - i];
+			for (i = 0; i < 8; i++)
+				debug_tab_barfield_sensor_data.values[i] = parse_telemetry->get_rgb_telemetry().dif[i];
 
-			imu_data.roll = telemetry.gx*2.0*PI/8192.0;
-			imu_data.pitch = telemetry.gy*2.0*PI/8192.0;
-			imu_data.yaw = telemetry.gz*2.0*PI/8192.0;
+			debug_tab_graph_data.functions[0].points[line_data_graph_ptr].y = parse_telemetry->get_line_telemetry().line_position;
+			line_data_graph_ptr = (line_data_graph_ptr + 1)%debug_tab_graph_data.functions[0].points.size();
+
+
+
+			debug_tab_sliderfield_controller_data.sliders[0].value = parse_telemetry->get_controll_telemetry().kp/1000.0;
+			debug_tab_sliderfield_controller_data.sliders[1].value = parse_telemetry->get_controll_telemetry().ki/1000.0;
+			debug_tab_sliderfield_controller_data.sliders[2].value = parse_telemetry->get_controll_telemetry().kd/10000.0;
+			debug_tab_sliderfield_controller_data.sliders[3].value = parse_telemetry->get_controll_telemetry().kd2/10000.0;
+			debug_tab_sliderfield_controller_data.sliders[4].value = parse_telemetry->get_controll_telemetry().speed_max/1000.0;
+
+			debug_tab_imu_data.roll = parse_telemetry->get_imu_telemetry().gx*PI/10000.0;
+		  debug_tab_imu_data.pitch = parse_telemetry->get_imu_telemetry().gy*PI/10000.0;
+		  debug_tab_imu_data.yaw = parse_telemetry->get_imu_telemetry().gz*PI/10000.0;
 
 			char str[1024];
+			sprintf(str, "line state = [%i %i %i]", parse_telemetry->get_line_telemetry().on_line, parse_telemetry->get_line_telemetry().line_position, parse_telemetry->get_line_telemetry().line_sensor_treshold);
+			debug_tab_textfield_terminal_data.lines[1] = str;
 
-			sprintf(str, "line position  %i", telemetry.line_position);
-			textfield_terminal_data.lines[0] = str;
+			sprintf(str, "obstacle state = [%i %i %i]", parse_telemetry->get_line_telemetry().obstacle, parse_telemetry->get_line_telemetry().obstacle_position, parse_telemetry->get_line_telemetry().obstacle_treshold);
+			debug_tab_textfield_terminal_data.lines[2] = str;
 
-			sprintf(str, "line state  %i", telemetry.line_state);
-			textfield_terminal_data.lines[1] = str;
+			yaw+= (parse_telemetry->get_imu_telemetry().gz/100) ;
 
-
-			sprintf(str, "gyroscope       %4i %4i %4i", telemetry.gx, telemetry.gy, telemetry.gz);
-			textfield_terminal_data.lines[2] = str;
-
-			sprintf(str, "magnetometer    %4i %4i %4i", telemetry.mx, telemetry.my, telemetry.mz);
-			textfield_terminal_data.lines[3] = str;
-
-			sprintf(str, "accelerometer  %4i %4i %4i", telemetry.ax, telemetry.ay, telemetry.az);
-			textfield_terminal_data.lines[4] = str;
+			printf(">>> %f\n", yaw);
 
 
-			graph_data.functions[0].points[ptr].y = telemetry.line_position;
+			sprintf(str, "imu = [%i %i %i] [%i %i %i] [%i %i %i] : [%i %i %i]\n",
+								parse_telemetry->get_imu_telemetry().gx,
+								parse_telemetry->get_imu_telemetry().gy,
+								parse_telemetry->get_imu_telemetry().gz,
 
-			ptr = (ptr+1)%graph_data.functions[0].points.size();
+								parse_telemetry->get_imu_telemetry().mx,
+								parse_telemetry->get_imu_telemetry().my,
+								parse_telemetry->get_imu_telemetry().mz,
 
-			opengl_gui->process();
+								parse_telemetry->get_imu_telemetry().ax,
+								parse_telemetry->get_imu_telemetry().ay,
+								parse_telemetry->get_imu_telemetry().az,
+
+								parse_telemetry->get_imu_telemetry().roll,
+								parse_telemetry->get_imu_telemetry().pitch,
+								(i32)(yaw));
+			debug_tab_textfield_terminal_data.lines[3] = str;
+
+
+
+
+
+
+
+			for (i = 0; i < 8; i++)
+				sensors_tab_line_sensor_data.values[i] = parse_telemetry->get_rgb_telemetry().dif[i];
+
+			for (i = 0; i < 8; i++)
+				sensors_tab_ambient_sensor_data.values[i] = parse_telemetry->get_rgb_telemetry().ambient[i];
+
+			for (i = 0; i < 8; i++)
+				sensors_tab_red_sensor_data.values[i] = parse_telemetry->get_rgb_telemetry().r[i];
+
+			for (i = 0; i < 8; i++)
+				sensors_tab_green_sensor_data.values[i] = parse_telemetry->get_rgb_telemetry().g[i];
+
+			for (i = 0; i < 8; i++)
+				sensors_tab_blue_sensor_data.values[i] = parse_telemetry->get_rgb_telemetry().b[i];
+
+			sensors_tab_treshold_sensor_data.sliders[0].value = parse_telemetry->get_line_telemetry().line_sensor_treshold;
+			sensors_tab_treshold_sensor_data.sliders[1].value = parse_telemetry->get_line_telemetry().obstacle_treshold;
+
+			sensors_tab_obstacle_sensor_data.functions[0].points[obstacle_data_graph_ptr].y = parse_telemetry->get_line_telemetry().obstacle_position;
+			obstacle_data_graph_ptr = (obstacle_data_graph_ptr+1)%sensors_tab_obstacle_sensor_data.functions[0].points.size();
+
+
+
+
 		}
+
 	}
 
-	delete sp;
-	delete parse_telemetry;
-
-	delete opengl_gui;
-
-	for (i = 0; i < items.size(); i++)
-		delete items[i];
-
-
-		*/
 	printf("program done\n");
 	return 0;
 }

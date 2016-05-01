@@ -39,7 +39,15 @@ void COpenGLGuiBarField::process()
     float x = px - width/2.0 + x_step*(j+0.5);
     float y = py;
 
-    float height_ = (k*data->values[j] + q);
+    float tmp = data->values[j];
+
+    if (tmp > params.max_value)
+      tmp = params.max_value;
+
+    if (tmp < params.min_value)
+      tmp = params.min_value;
+
+    float height_ = (k*tmp + q);
     float width_ = x_step*0.85;
 
     glColor3f(params.color_r, params.color_g, params.color_b);
