@@ -155,9 +155,9 @@ int main()
 			debug_tab_sliderfield_controller_data.sliders[3].value = parse_telemetry->get_controll_telemetry().kd2/10000.0;
 			debug_tab_sliderfield_controller_data.sliders[4].value = parse_telemetry->get_controll_telemetry().speed_max/1000.0;
 
-			debug_tab_imu_data.roll = parse_telemetry->get_imu_telemetry().gx*PI/10000.0;
-		  debug_tab_imu_data.pitch = parse_telemetry->get_imu_telemetry().gy*PI/10000.0;
-		  debug_tab_imu_data.yaw = parse_telemetry->get_imu_telemetry().gz*PI/10000.0;
+			debug_tab_imu_data.roll = 0.0;
+		  debug_tab_imu_data.pitch = 0.0;
+		  debug_tab_imu_data.yaw = PI*parse_telemetry->get_imu_telemetry().yaw/180.0;
 
 			char str[1024];
 			sprintf(str, "line state = [%i %i %i]", parse_telemetry->get_line_telemetry().on_line, parse_telemetry->get_line_telemetry().line_position, parse_telemetry->get_line_telemetry().line_sensor_treshold);

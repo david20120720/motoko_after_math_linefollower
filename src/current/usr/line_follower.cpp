@@ -66,7 +66,7 @@ void CLineFollower::process()
 	i32 motor_right = (base_speed - dif_speed)*SPEED_MAX;
 	i32 motor_left = (base_speed + dif_speed)*SPEED_MAX;
 
-	drv8834_run(motor_left, motor_right);
+	//drv8834_run(motor_left, motor_right);
 }
 
 

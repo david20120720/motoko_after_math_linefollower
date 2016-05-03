@@ -77,12 +77,8 @@ void line_follower()
 
  	event_timer_set_period(EVENT_TIMER_2_ID, SAMPLIG_PERIOD);
 
-	u32 time_stop = timer_get_time() + 100*1000;
-
 	while (1)
 	{
-		event_timer_wait(EVENT_TIMER_2_ID);
-
 		if (
 				(line_sensor_get()->obstacle == LINE_SENSOR_FLAG_OBSTACLE) &&
 				(lsm9ds0_get()->ax > 8000)
@@ -94,18 +90,18 @@ void line_follower()
 		else
 			broken_line_main();
 
+
 	 	cnt++;
 	 	if ((cnt%20) == 0)
 	 		led_on(LED_0);
 	 	else
 	 		led_off(LED_0);
-
-		if (time_stop < timer_get_time())
-			break;
 	}
 
 	drv8834_run(0, 0);
 }
+
+
 
 
 void main_thread()
@@ -118,7 +114,6 @@ void main_thread()
 
 	robot_config_init();
 
-
 	create_thread(line_sensor_thread, line_sensor_thread_stack, sizeof(line_sensor_thread_stack), PRIORITY_MAX);
 	create_thread(i2c_sensor_thread, i2c_sensor_thread_stack, sizeof(i2c_sensor_thread_stack), PRIORITY_MAX);
 	create_thread(telemetry_thread, telemetry_thread_stack, sizeof(telemetry_thread_stack), PRIORITY_MAX + 20);
@@ -128,7 +123,9 @@ void main_thread()
 	#if CONFIG_USE_CAMERA == 1
 	camera_init();
 	#endif
- 
+
+
+
 	while (1)
 	{
 		if (g_error != 0)
@@ -143,8 +140,11 @@ void main_thread()
 		if (get_key() != 0)
 		{
 			timer_delay_ms(1000);
-			line_follower();
+			//line_follower();
+			obstacle_test();
 		}
+
+
 
 		led_on(LED_0);
     timer_delay_ms(100);

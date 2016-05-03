@@ -72,21 +72,24 @@ i32 CObstacle::abs_(i32 x)
 
 void CObstacle::rotate_robot(i32 angle)
 {
-	i32 gyro_angle = 0;
+	//angle = (angle*2000)/90;
+	angle = (angle*1100)/90;
 
-	float speed_max = 0.7;
-	float speed = 0.0;
-	float k = 0.8;
+	float speed_max = 0.4;
+	float ks = speed_max/10.0;
 
-	angle = angle*1600;
 
-	while (abs_(gyro_angle) < abs_(angle))
+	imu_yaw_reset();
+
+	float speed_dif = 0.0;
+	while (abs_(lsm9ds0_get()->yaw) < abs_(angle))
 	{
-		gyro_angle+= lsm9ds0_get()->gz;
+		speed_dif+= ks;
+		if (speed_dif > speed_max)
+			speed_dif = speed_max;
 
-		speed = k*speed + (1.0 - k)*speed_max;
 
-		i32 speed_ = SPEED_MAX*speed;
+		i32 speed_ = SPEED_MAX*speed_dif;
 		if (angle > 0)
 			drv8834_run(speed_, -speed_);
 		else
@@ -96,7 +99,7 @@ void CObstacle::rotate_robot(i32 angle)
 	}
 
 	drv8834_run(0, 0);
-	timer_delay_ms(100);
+	timer_delay_ms(200);
 }
 
 void CObstacle::go_forward(i32 speed, u32 time, u8 (*term_fun)())
@@ -142,6 +145,24 @@ void CObstacle::go_forward(i32 speed, u32 time, u8 (*term_fun)())
 	timer_delay_ms(100);
 }
 
+void CObstacle::test()
+{
+	/*
+	rotate_robot(180);
+	rotate_robot(-180);
+*/
+	rotate_robot(90);
+	rotate_robot(90);
+	rotate_robot(90);
+	rotate_robot(90);
+
+	rotate_robot(-90);
+	rotate_robot(-90);
+	rotate_robot(-90);
+	rotate_robot(-90);
+}
+
+
 
 void obstacle_init()
 {
@@ -151,4 +172,9 @@ void obstacle_init()
 void obstacle_main()
 {
 	c_obstacle.process();
+}
+
+void obstacle_test()
+{
+	c_obstacle.test();
 }

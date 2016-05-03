@@ -11,6 +11,7 @@ extern "C" {
 
 void obstacle_init();
 void obstacle_main();
+void obstacle_test();
 
 #ifdef __cplusplus
 }
@@ -30,6 +31,8 @@ class CObstacle
 
 		void init();
 		void process();
+
+		void test();
 
 	private:
 		i32 abs_(i32 x);

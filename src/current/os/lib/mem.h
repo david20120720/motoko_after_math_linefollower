@@ -12,6 +12,10 @@ extern "C" {
 #define NULL  0
 #endif
 
+void * 	malloc (unsigned int __size);
+void 	free (void *__ptr);
+
+
 void* malloc_safe(u32 size);
 void free_safe(void *ptr);
 
@@ -19,6 +23,11 @@ void free_safe(void *ptr);
 #ifdef __cplusplus
 }
 #endif
+
+
+
+
+
 
 #ifdef __cplusplus
 

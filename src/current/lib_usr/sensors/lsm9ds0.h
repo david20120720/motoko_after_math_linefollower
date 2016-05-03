@@ -13,13 +13,13 @@ struct sLSM9DS0IMU
     i16 mx, my, mz;
     i16 gx, gy, gz;
 
-    i16 gx_ofs, gy_ofs, gz_ofs;
+    i32 gx_ofs, gy_ofs, gz_ofs;
 
-    i16 roll, pitch, yaw;
+    i32 roll, pitch, yaw;
 
     i16 temp;
 };
-
+ 
 
 
 #define LSM9DS0_ACC_MAG_ADDRESS     0x3C
@@ -114,6 +114,11 @@ struct sLSM9DS0IMU
 u32 lsm9ds0_init();
 struct sLSM9DS0IMU* lsm9ds0_get();
 void lsm9ds0_read();
+
+void imu_roll_reset();
+void imu_pitch_reset();
+void imu_yaw_reset();
+
 
 #ifdef __cplusplus
 }
