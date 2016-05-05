@@ -176,7 +176,7 @@ void putx_(u32 n)
  print formated string
  know formats : %i, %u, %x, %c, %s
 */
-void printf_(char *s, ...)
+void printf_(const char *s, ...)
 {
 	#ifdef LIB_MUTEX
 	mutex_lock(&mutex_printf_);

@@ -2,7 +2,6 @@
 #define _Q_PREDICTOR_H_
 
 #include "../lib_usr/lib_usr.h"
-#include "robot_config.h"
 
 
 #define Q_PREDICTOR_MODEL_SIZE      ((u32)16)

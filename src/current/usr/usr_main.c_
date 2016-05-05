@@ -1,17 +1,6 @@
 #include "usr_main.h"
+#include "ai.h"
 
-#include "line_follower.h"
-#include "broken_line.h"
-#include "obstacle.h"
-#include "q_predictor.h"
-
-#include "error.h"
-#include "robot_config.h"
-#include "telemetry.h"
-
-
-#define SAMPLIG_PERIOD		(u32)4
-#define I2C_SAMPLIG_PERIOD	(u32)10
 
 volatile u32 g_error;
 

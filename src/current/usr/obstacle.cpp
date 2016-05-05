@@ -1,18 +1,17 @@
 #include "obstacle.h"
 
-class CObstacle c_obstacle;
-
+/*
 u8 robot_on_line()
 {
 	if (line_sensor_get()->on_line == LINE_SENSOR_FLAG_ON_LINE)
 		return 1;
 	return 0;
 }
-
+*/
 
 CObstacle::CObstacle()
 {
-	init();
+	init(NULL);
 }
 
 CObstacle::~CObstacle()
@@ -20,23 +19,14 @@ CObstacle::~CObstacle()
 
 }
 
-void CObstacle::init()
+void CObstacle::init(class CRobot *robot_)
 {
 	state = 0;
+	this->robot = robot_;
 }
 
 void CObstacle::process()
 {
-	/*
-	go_forward(0, 100, NULL);
-	go_forward(-60, 130, NULL);
-
-	while (1)
-	{
-		__asm("nop");
-	}
-	*/
-
 	if (get_mode_jumper() == 0)
 	{
 		go_forward(0, 100, NULL);
@@ -56,7 +46,8 @@ void CObstacle::process()
 
 		rotate_robot(-90);
 		go_forward(60, 50, NULL);
-		go_forward(60, 250, robot_on_line);
+		//go_forward(60, 250, robot_on_line);
+		go_forward(60, 250, NULL);
 		rotate_robot(90);
 	}
 }
@@ -79,10 +70,10 @@ void CObstacle::rotate_robot(i32 angle)
 	float ks = speed_max/10.0;
 
 
-	imu_yaw_reset();
+	this->robot->reset_imu();
 
 	float speed_dif = 0.0;
-	while (abs_(lsm9ds0_get()->yaw) < abs_(angle))
+	while (abs_(robot->get_imu_sensor()->yaw) < abs_(angle))
 	{
 		speed_dif+= ks;
 		if (speed_dif > speed_max)
@@ -91,14 +82,14 @@ void CObstacle::rotate_robot(i32 angle)
 
 		i32 speed_ = SPEED_MAX*speed_dif;
 		if (angle > 0)
-			drv8834_run(speed_, -speed_);
+			robot->set_motors(speed_, -speed_);
 		else
-			drv8834_run(-speed_, speed_);
+			robot->set_motors(-speed_, speed_);
 
 		timer_delay_ms(10);
-	}
+	} 
 
-	drv8834_run(0, 0);
+	robot->set_motors(0, 0);
 	timer_delay_ms(200);
 }
 
@@ -117,11 +108,14 @@ void CObstacle::go_forward(i32 speed, u32 time, u8 (*term_fun)())
 	float speed_ = 0.0;
 	float ks = 0.8;
 
+	this->robot->reset_imu();
+
+
 	if (speed != 0)
 	{
 		while (timer_get_time() < time_stop)
 		{
-			gyro_angle+= lsm9ds0_get()->gz;
+			gyro_angle = robot->get_imu_sensor()->yaw;
 
 			error_prev = error;
 			error = 0.0 - gyro_angle;
@@ -132,7 +126,7 @@ void CObstacle::go_forward(i32 speed, u32 time, u8 (*term_fun)())
 
 			i32 speed_l = speed_ - dif;
 			i32 speed_r = speed_ + dif;
-			drv8834_run(speed_l, speed_r);
+			robot->set_motors(speed_l, speed_r);
 
 			timer_delay_ms(10);
 			if (term_fun != NULL)
@@ -147,10 +141,6 @@ void CObstacle::go_forward(i32 speed, u32 time, u8 (*term_fun)())
 
 void CObstacle::test()
 {
-	/*
-	rotate_robot(180);
-	rotate_robot(-180);
-*/
 	rotate_robot(90);
 	rotate_robot(90);
 	rotate_robot(90);
@@ -160,21 +150,4 @@ void CObstacle::test()
 	rotate_robot(-90);
 	rotate_robot(-90);
 	rotate_robot(-90);
-}
-
-
-
-void obstacle_init()
-{
-	c_obstacle.init();
-}
-
-void obstacle_main()
-{
-	c_obstacle.process();
-}
-
-void obstacle_test()
-{
-	c_obstacle.test();
 }

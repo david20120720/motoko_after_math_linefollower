@@ -6,7 +6,7 @@ void abort_error_(u32 error_code, u32 error_param)
 
 	while (1)
 	{
-		printf_("error code %u:%u\n", error_code, error_param);
+		printf_(">>>E  error code %u:%u\n", error_code, error_param);
 
 		for (i = 0; i < (3+error_code); i++)
 		{

@@ -86,7 +86,7 @@ float CQPredictor::process(float input_sample)
       dist_min = dist;
       dist_min_idx = j;
     }
-  }
+  } 
 
   float sum = 0.0;
   for (i = 0; i < Q_PREDICTOR_MODEL_SIZE; i++)

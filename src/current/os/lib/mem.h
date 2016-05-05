@@ -12,6 +12,8 @@ extern "C" {
 #define NULL  0
 #endif
 
+void mem_init();
+
 void * 	malloc (unsigned int __size);
 void 	free (void *__ptr);
 

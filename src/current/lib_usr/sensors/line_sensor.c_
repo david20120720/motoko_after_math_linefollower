@@ -40,7 +40,7 @@ u32 line_sensor_init(i32 line_sensor_treshold, i32 obstacle_treshold)
 	g_line_sensor.on_line = 0;
 	g_line_sensor.line_position = 0;
 	g_line_sensor.line_sensor_treshold = line_sensor_treshold;
- 
+
 	g_line_sensor.obstacle = 0;
 	g_line_sensor.obstacle_position = 0;
 	g_line_sensor.obstacle_treshold = obstacle_treshold;

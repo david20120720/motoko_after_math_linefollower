@@ -169,6 +169,13 @@ void SysTick_Handler()
   #endif
 }
 
+// void SVC_Handler()__attribute__(( naked ));
+void SVC_Handler()
+{
+ __asm volatile ("nop");
+ __asm volatile ("nop");
+}
+
 /**
  @brief disable interrupts
 

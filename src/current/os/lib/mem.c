@@ -23,7 +23,7 @@ void mem_init()
 }
 
 
-void * 	malloc(unsigned int __size)
+void * malloc(unsigned int __size)
 {
   if ((char*)(__size + __malloc_current_ptr) > __malloc_heap_end)
     return NULL;
@@ -35,7 +35,7 @@ void * 	malloc(unsigned int __size)
   return res;
 }
 
-void 	free(void *__ptr)
+void free(void *__ptr)
 {
   (void)__ptr;
 }

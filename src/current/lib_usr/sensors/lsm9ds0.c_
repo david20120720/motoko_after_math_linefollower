@@ -1,4 +1,5 @@
 #include "lsm9ds0.h"
+#include "../lsm9ds0_regs.h"
 
 struct sLSM9DS0IMU g_lsm9ds0_imu;
 
@@ -122,7 +123,7 @@ void lsm9ds0_read()
     g_lsm9ds0_imu.gz = tmp;
 
     g_lsm9ds0_imu.yaw = g_lsm9ds0_imu.yaw + (g_lsm9ds0_imu.gz - g_lsm9ds0_imu.gz_ofs)/(i32)100;
- 
+
     //read magnetometer
     tmp = ((u16)i2c_read_reg(LSM9DS0_ACC_MAG_ADDRESS, LSM9DS0_OUT_X_L_M));
     tmp|= ((u16)i2c_read_reg(LSM9DS0_ACC_MAG_ADDRESS, LSM9DS0_OUT_X_H_M))<<8;

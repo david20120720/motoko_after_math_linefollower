@@ -8,13 +8,13 @@
 #include "common/pid.h"           /*pid controller*/
 
 
-#include "sensors/lsm9ds0.h"      /*IMU, 9DOF*/
-
 #include "sensors/rgb_i2c.h"       /*rgb sensor*/
-#include "sensors/line_sensor.h"   /*rgb sensor*/
 
 #include "sensors/camera.h"       /*line scan camera*/
 
+#include "error.h"
+
+#include "robot.h"
 
 
 

@@ -1,7 +1,7 @@
 #include "timer.h"
 #include "stm32f30x_tim.h"
 #include "../core/core_cmFunc.h"
- 
+
 
 volatile time_t __system_time__;
 
@@ -22,35 +22,35 @@ void timer_init()
 
 	__system_time__ = 0;
 
- 
+
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
 
-    TIM_TimeBaseInitTypeDef timer; 
+    TIM_TimeBaseInitTypeDef timer;
     timer.TIM_Prescaler = 280; //(84 - 1);
     timer.TIM_CounterMode = TIM_CounterMode_Up;
-    timer.TIM_Period = 50 - 1; 
+    timer.TIM_Period = 50 - 1;
     timer.TIM_ClockDivision = TIM_CKD_DIV1;
     timer.TIM_RepetitionCounter = 0;
-    TIM_TimeBaseInit(TIM3, &timer); 
-    
-    TIM_Cmd(TIM3, ENABLE); 
+    TIM_TimeBaseInit(TIM3, &timer);
+
+    TIM_Cmd(TIM3, ENABLE);
 
    TIM3->DIER |= TIM_DIER_UIE; // Enable interrupt on update event
 
- 
+
 
     NVIC_InitTypeDef nvicStructure;
-    nvicStructure.NVIC_IRQChannel = TIM3_IRQn; 
+    nvicStructure.NVIC_IRQChannel = TIM3_IRQn;
     nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
     nvicStructure.NVIC_IRQChannelSubPriority = 1;
     nvicStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvicStructure);
-} 
-	 
+}
+
 void TIM3_IRQHandler()
 {
-	u32 i; 
+	u32 i;
 	for (i = 0; i < EVENT_TIMER_COUNT; i++)
 	{
 		if (__event_timer_cnt__[i])
@@ -76,11 +76,11 @@ void timer_delay_loops(u32 loops)
 time_t timer_get_time()
 {
 	volatile time_t time;
-	
+
 	__disable_irq();
 	time = __system_time__;
 	__enable_irq();
-	
+
 	return (time/10);
 }
 
@@ -120,7 +120,7 @@ u32 event_timer_get_flag(u32 id)
 	__enable_irq();
 
 	return res;
-}
+} 
 
 void event_timer_clear_flag(u32 id)
 {

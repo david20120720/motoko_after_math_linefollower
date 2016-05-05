@@ -2,21 +2,6 @@
 #define _OBSTACLE_H_
 
 #include "../lib_usr/lib_usr.h"
-#include "robot_config.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-void obstacle_init();
-void obstacle_main();
-void obstacle_test();
-
-#ifdef __cplusplus
-}
-#endif
-
 
 #ifdef __cplusplus
 
@@ -25,11 +10,13 @@ class CObstacle
 	private:
 		u32 state;
 
+		class CRobot *robot;
+
 	public:
 		CObstacle();
 		~CObstacle();
 
-		void init();
+		void init(class CRobot *robot_);
 		void process();
 
 		void test();

@@ -29,7 +29,7 @@ void putx_(u32 n);
  \n
  \n float is not supported\n
 */
-void printf_(char *s, ...);
+void printf_(const char *s, ...);
 
 
 void stdio_init();

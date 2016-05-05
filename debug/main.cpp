@@ -134,7 +134,8 @@ int main()
 	float yaw = 0.0;
 	while (getch() != 27)
 	{
-		char c = sp->serial_read();
+		//char c = sp->serial_read();
+		char c = '\0';
 
 		if (parse_telemetry->parse(c) != 0)
 		{
