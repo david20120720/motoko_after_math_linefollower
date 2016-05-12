@@ -31,6 +31,9 @@ thread_stack_t __null_thread_stack__[32];
 */
 volatile u32 __current_thread__;
 
+volatile u32 __context_switch__;
+
+
 /**
  @brief thread scheduler algorithm
 
@@ -70,10 +73,10 @@ void scheduler()
     {
       /*find next thread in cycle*/
       __current_thread__++;
-      if (__current_thread__ >= TASK_MAX_COUNT)
+      if (__current_thread__ >= THREADS_MAX_COUNT)
         __current_thread__ = 0;
     }
-  while ( ( (__thread__[__current_task__].flag&TF_CREATED) == 0) );
+  while ( ( (__thread__[__current_thread__].flag&TF_CREATED) == 0) );
   #endif
 }
 
@@ -92,6 +95,8 @@ void scheduler()
  \n
  @see void scheduler()
 */
+
+
 
 void SysTick_Handler()__attribute__(( naked ));
 void SysTick_Handler()
@@ -122,6 +127,8 @@ void SysTick_Handler()
 
   scheduler();						                /*choose next thread*/
 
+  __context_switch__++;
+
   sp = __thread__[__current_thread__].sp;			/*set it stackpointer*/
 
   u32 int_return = 0xfffffff9;      /*exit interrupt magic number,
@@ -142,7 +149,6 @@ void SysTick_Handler()
                   "bx lr\n\t" : : "r" (int_return), "r" (sp)
   );
   #else
-  #ifdef CPU_CORE_CORTEX_M0
   __asm volatile( "mov lr, %0\n\t"    /*set magic*/
                   "msr msp, %1\n\t"   /*switch stack*/
                   "pop {r4-r7}\n\t"
@@ -153,27 +159,14 @@ void SysTick_Handler()
                   "pop {r4-r7}\n\t"
                   "bx lr\n\t" : : "r" (int_return), "r" (sp)
   );
-  #else
-  __asm volatile( "mov lr, %0\n\t"    /*set magic*/
-                  "msr msp, %1\n\t"   /*switch stack*/
-                  "pop {r4-r7}\n\t"
-                  "mov r8, r4\n\t"
-                  "mov r9, r5\n\t"
-                  "mov r10, r6\n\t"
-                  "mov r11, r7\n\t"
-                  "pop {r4-r7}\n\t"
-                  "bx lr\n\t" : : "r" (int_return), "r" (sp)
-  );
-  #endif
   #endif
   #endif
 }
 
-// void SVC_Handler()__attribute__(( naked ));
-void SVC_Handler()
+
+u32 get_context_switch()
 {
- __asm volatile ("nop");
- __asm volatile ("nop");
+  return __context_switch__;
 }
 
 /**
@@ -204,8 +197,8 @@ void sched_on()
 */
 void yield()
 {
-  //__asm volatile("svc #0");
-  //__asm volatile("nop");
+  // __asm volatile("svc #0");
+  __asm volatile("nop");
 }
 
 /**
@@ -274,6 +267,7 @@ void kernel_init()
     __thread__[i].cnt = PRIORITY_MAX;
   }
 
+  __context_switch__ = 0;
   __current_thread__ = SYSTEM_INIT;
 
   create_thread(null_thread, __null_thread_stack__, sizeof(__null_thread_stack__), PRIORITY_MIN);

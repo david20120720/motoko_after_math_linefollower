@@ -36,7 +36,7 @@ void line_follower()
 
   event_timer_set_period(EVENT_TIMER_2_ID, SAMPLIG_PERIOD);
 
-/*
+  /*
   u32 time_now = 0;
   u32 time_prev = 0;
   */
@@ -175,7 +175,6 @@ void telemetry_thread()
 
     printf_("\n\n");
 
-
     timer_delay_ms(100);
   }
 }
@@ -276,9 +275,7 @@ void main_thread()
 
   create_thread(line_sensor_thread, line_sensor_thread_stack, sizeof(line_sensor_thread_stack), PRIORITY_MAX);
   create_thread(imu_sensor_thread, imu_sensor_thread_stack, sizeof(imu_sensor_thread_stack), PRIORITY_MAX);
-//  create_thread(telemetry_thread, telemetry_thread_stack, sizeof(telemetry_thread_stack), PRIORITY_MAX + 20);
-
-  // __asm volatile("SVC 0");
+  // create_thread(telemetry_thread, telemetry_thread_stack, sizeof(telemetry_thread_stack), PRIORITY_MAX + 20);
 
   while (1)
   {

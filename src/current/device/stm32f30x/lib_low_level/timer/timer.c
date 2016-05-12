@@ -88,7 +88,7 @@ void timer_delay_ms(u32 ms)
 {
 	volatile time_t time_end = (time_t)ms + timer_get_time();
 	while (time_end > timer_get_time())
-		sleep();
+		core_yield();
 }
 
 
@@ -105,7 +105,7 @@ void event_timer_set_period(u32 id, u16 period)
 void event_timer_wait(u32 id)
 {
 	while (__event_timer_flag__[id] == 0)
-		sleep();
+		core_yield();
 
 	__disable_irq();
 	__event_timer_flag__[id] = 0;
@@ -120,7 +120,7 @@ u32 event_timer_get_flag(u32 id)
 	__enable_irq();
 
 	return res;
-} 
+}
 
 void event_timer_clear_flag(u32 id)
 {

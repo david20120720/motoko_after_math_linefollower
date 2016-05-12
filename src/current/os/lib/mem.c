@@ -25,19 +25,31 @@ void mem_init()
 
 void * malloc(unsigned int __size)
 {
-  if ((char*)(__size + __malloc_current_ptr) > __malloc_heap_end)
-    return NULL;
+	void *res = NULL;
 
-	void *res = __malloc_current_ptr;
+  __size = (__size/sizeof(unsigned int))+ 1;
 
-	__malloc_current_ptr+= __size;
+
+  if ( (__malloc_current_ptr + __size + 1) < __malloc_heap_end )
+  {
+    *__malloc_current_ptr = __size;
+    res = __malloc_current_ptr + 1;
+
+    __malloc_current_ptr+= __size + 1;
+  }
 
   return res;
 }
 
 void free(void *__ptr)
 {
-  (void)__ptr;
+	if (__ptr == NULL)
+		return;
+
+	unsigned int *tmp = (unsigned int*)__ptr;
+
+	__malloc_current_ptr = (char*)(tmp - 1);
+	*(tmp - 1) = 0;
 }
 
 

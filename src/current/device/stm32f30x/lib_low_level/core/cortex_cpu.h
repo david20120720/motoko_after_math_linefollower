@@ -6,6 +6,7 @@
 
 void sys_tick_init();
 void sleep();
+void core_yield();
 void sytem_clock_init();
 
 #endif

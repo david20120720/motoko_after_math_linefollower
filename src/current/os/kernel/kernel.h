@@ -139,6 +139,9 @@ void sched_on();
 */
 void yield();
 
+
+u32 get_context_switch();
+
 /**
  @brief return unique thread ID
 

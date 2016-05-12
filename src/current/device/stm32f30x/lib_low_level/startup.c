@@ -19,8 +19,7 @@ extern int main(void);
 //  Default interrupt handler
 void __attribute__((interrupt("IRQ"))) Default_Handler()
 {
-	while (1)
-		__asm("nop");
+	__asm volatile("nop");
 }
 
 
@@ -45,7 +44,7 @@ static void __attribute__((naked)) HardFault_Handler(void)
     while (1)
         __asm("nop");
 }
-
+ 
 /* Weak definitions of handlers point to Default_Handler if not implemented */
 void NMI_Handler()          __attribute__ ((weak, alias("Default_Handler")));
 void MemManage_Handler()          __attribute__ ((weak, alias("Default_Handler")));

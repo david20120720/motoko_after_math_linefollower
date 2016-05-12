@@ -3,6 +3,22 @@
 
 #include "../suzuha_os.h"
 
+/*
+  simple stack like malloc (without fragmentation)
+
+  usage example :
+
+  a1 = (char*)malloc_safe(a1_size);
+  a2 = (char*)malloc_safe(a2_size);
+  a3 = (char*)malloc_safe(a3_size);
+
+  //code hera
+
+  free(a3);
+  free(a2);
+  free(a1);
+*/
+
 
 #ifdef __cplusplus
 extern "C" {

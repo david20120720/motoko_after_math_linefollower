@@ -49,7 +49,8 @@ void CLineFollower::process()
 	if (this->robot->get_robot_configure()->use_predictor != 0)
 		required_position = 0.3*c_q_predictor.process(line_position);
 		*/
-		
+
+
 	float error = required_position - line_position;
 	float error_ = m_abs(error);
 
