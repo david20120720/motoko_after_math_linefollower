@@ -296,7 +296,7 @@ void main_thread()
 
 
   //motor_test();
- 
+
 
   if (c_robot.get_error_type() != 0)
   {
@@ -317,6 +317,8 @@ void main_thread()
       timer_delay_ms(1000);
       line_follower();
     }
+
+    printf_("encoder : %u %u\n", left_encoder_read(), right_encoder_read());
 
     led_on(LED_0);
     timer_delay_ms(100);
