@@ -11,7 +11,8 @@ extern "C" {
 #define GPIO_BASE	GPIOB
 
 #define LED_0		((u32)(1<<15))
-#define KEY 		(1<<9)
+//#define KEY 		(1<<9)
+#define KEY 		(1<<12)
 
 
 void gpio_init();

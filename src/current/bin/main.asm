@@ -4125,7 +4125,7 @@ Disassembly of section .text:
  8002a64:	f88d 6005 	strb.w	r6, [sp, #5]
  8002a68:	f88d 4007 	strb.w	r4, [sp, #7]
  8002a6c:	f7ff ff7d 	bl	800296a <GPIO_Init>
- 8002a70:	f44f 7300 	mov.w	r3, #512	; 0x200
+ 8002a70:	f44f 5380 	mov.w	r3, #4096	; 0x1000
  8002a74:	4669      	mov	r1, sp
  8002a76:	4813      	ldr	r0, [pc, #76]	; (8002ac4 <gpio_init+0x9c>)
  8002a78:	9300      	str	r3, [sp, #0]
@@ -4180,7 +4180,7 @@ Disassembly of section .text:
  8002af4:	4b02      	ldr	r3, [pc, #8]	; (8002b00 <get_key+0xc>)
  8002af6:	8a18      	ldrh	r0, [r3, #16]
  8002af8:	43c0      	mvns	r0, r0
- 8002afa:	f400 7000 	and.w	r0, r0, #512	; 0x200
+ 8002afa:	f400 5080 	and.w	r0, r0, #4096	; 0x1000
  8002afe:	4770      	bx	lr
  8002b00:	48000400 	.word	0x48000400
 
@@ -6056,11 +6056,11 @@ Disassembly of section .text:
  80045e0:	2e302e32 	.word	0x2e302e32
  80045e4:	55420a36 	.word	0x55420a36
  80045e8:	20444c49 	.word	0x20444c49
- 80045ec:	2079614d 	.word	0x2079614d
- 80045f0:	32203620 	.word	0x32203620
+ 80045ec:	206e754a 	.word	0x206e754a
+ 80045f0:	32203820 	.word	0x32203820
  80045f4:	20363130 	.word	0x20363130
- 80045f8:	343a3231 	.word	0x343a3231
- 80045fc:	34323a35 	.word	0x34323a35
+ 80045f8:	343a3930 	.word	0x343a3930
+ 80045fc:	33333a32 	.word	0x33333a32
  8004600:	000a      	.short	0x000a
  8004602:	7473      	.short	0x7473
  8004604:	206f6964 	.word	0x206f6964

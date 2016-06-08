@@ -221,7 +221,36 @@ void telemetry_thread()
 
 
 
+void motor_test()
+{
+  i32 motor_test_speed = SPEED_MAX;
+/*
+  drv8834_run(motor_test_speed, 0);
+  timer_delay_ms(1000);
 
+  drv8834_run(-motor_test_speed, 0);
+  timer_delay_ms(1000);
+
+  drv8834_run(0, motor_test_speed);
+  timer_delay_ms(1000);
+
+  drv8834_run(0, -motor_test_speed);
+  timer_delay_ms(1000);
+
+
+  drv8834_run(motor_test_speed, motor_test_speed);
+  timer_delay_ms(1000);
+
+  drv8834_run(-motor_test_speed, -motor_test_speed);
+  timer_delay_ms(1000);
+
+  */
+  drv8834_run(0, 0);
+
+  drv8834_run(motor_test_speed, motor_test_speed);
+  timer_delay_ms(500);
+  drv8834_run(0, 0);
+}
 
 
 void main_thread()
@@ -264,6 +293,10 @@ void main_thread()
   c_line_follower.init(&c_robot);
   c_obstacle.init(&c_robot);
   c_broken_line.init(&c_robot);
+
+
+  //motor_test();
+ 
 
   if (c_robot.get_error_type() != 0)
   {

@@ -10,7 +10,7 @@
 #define DRV8834_B_PHASE_GPIO	GPIOA
 #define DRV8834_B_PHASE			((u32)(1<<15))
 
-#define CUSTOM_BRIDGE 0
+//#define CUSTOM_BRIDGE 1
 
 void drv8834_init()
 {
