@@ -6,6 +6,7 @@
 #include "line_follower.h"
 #include "obstacle.h"
 #include "broken_line.h"
+#include "map.h"
 
 #define SAMPLIG_PERIOD		     (u32)4
 #define I2C_SAMPLIG_PERIOD	   (u32)10
@@ -16,6 +17,7 @@ class CRobot  c_robot;
 class CLineFollower c_line_follower;
 class CObstacle c_obstacle;
 class CBrokenLine c_broken_line;
+class CMap c_map;
 
 
 #define I2C_SENSOR_THREAD_STACK_SIZE      128
@@ -26,6 +28,9 @@ class CBrokenLine c_broken_line;
 thread_stack_t imu_sensor_thread_stack[I2C_SENSOR_THREAD_STACK_SIZE];
 thread_stack_t line_sensor_thread_stack[LINE_SENSOR_THREAD_STACK_SIZE];
 thread_stack_t telemetry_thread_stack[TELEMETRY_THREAD_STACK_SIZE];
+
+
+u32 g_run;
 
 
 
@@ -44,10 +49,7 @@ void line_follower()
   {
     event_timer_wait(EVENT_TIMER_2_ID);
 
-    if (
-        (c_robot.get_obstacle_position_sensor()->obstacle == ROBOT_OBSTACLE_SENSOR_FLAG_OBSTACLE)
-        // && (c_robot.get_imu_sensor()->pitch > 8000) //TODO
-      )
+    if (c_robot.get_obstacle_position_sensor()->obstacle == ROBOT_OBSTACLE_SENSOR_FLAG_OBSTACLE)
       c_obstacle.process();
     else
     if (c_robot.get_line_position_sensor()->on_line == ROBOT_LINE_SENSOR_FLAG_ON_LINE)
@@ -60,15 +62,6 @@ void line_follower()
       led_on(LED_0);
     else
       led_off(LED_0);
-
-      /*
-    if ((cnt%100) == 0)
-    {
-      time_prev = time_now;
-      time_now = timer_get_time();
-      printf_("main loop time %u/100 ms\n", time_now - time_prev);
-    }
-    */
   }
 }
 
@@ -91,17 +84,15 @@ void imu_sensor_thread()
  	{
  		event_timer_wait(EVENT_TIMER_1_ID);
     c_robot.process_imu_sensor();
+
+    if (g_run != 0)
+      c_map.add_to_map();
  	}
 }
 
 
 void telemetry_thread()
 {
-  struct sRobotConfigure* get_robot_configure();
-  struct sLinePositionSensor* get_line_position_sensor();
-  struct sObstacleSensor* get_obstacle_position_sensor();
-  struct sIMUSensor* get_imu_sensor();
-
   while (1)
   {
     u32 i;
@@ -188,14 +179,15 @@ void telemetry_thread()
 
 
 #define LINE_SENSOR_TRESHOLD	        (i32)150
+//#define LINE_SENSOR_TRESHOLD	        (i32)120
 #define OBSTACLE_TRESHOLD		         (i32)700
 
 #define CONFIG_USE_PREDICTOR         0      /*this enables line shape predictor to estimate erro value*/
 
 #if CONFIG_USE_PREDICTOR == 0
-#define   CONFIG_KP                 (i32)326  /*proportional, 0.326*/
+#define   CONFIG_KP                 (i32)70  /*proportional, 0.326*/
 #define   CONFIG_KI                 (i32)0    /*integrate*/
-#define   CONFIG_KD                 (i32)4530  /*derivative., 10.53*/
+#define   CONFIG_KD                 (i32)3500 //4530  /*derivative., 10.53*/
 #define   CONFIG_KD2                (i32)0    /*second derivative*/
 #else
 #define   CONFIG_KP                 (i32)217  /*proportional, 0.326*/
@@ -219,45 +211,13 @@ void telemetry_thread()
 
 
 
-
-
-void motor_test()
-{
-  i32 motor_test_speed = SPEED_MAX;
-/*
-  drv8834_run(motor_test_speed, 0);
-  timer_delay_ms(1000);
-
-  drv8834_run(-motor_test_speed, 0);
-  timer_delay_ms(1000);
-
-  drv8834_run(0, motor_test_speed);
-  timer_delay_ms(1000);
-
-  drv8834_run(0, -motor_test_speed);
-  timer_delay_ms(1000);
-
-
-  drv8834_run(motor_test_speed, motor_test_speed);
-  timer_delay_ms(1000);
-
-  drv8834_run(-motor_test_speed, -motor_test_speed);
-  timer_delay_ms(1000);
-
-  */
-  drv8834_run(0, 0);
-
-  drv8834_run(motor_test_speed, motor_test_speed);
-  timer_delay_ms(500);
-  drv8834_run(0, 0);
-}
-
-
 void main_thread()
 {
   printf_(OS_WELCOME_MESSAGE);
 
   timer_delay_ms(300);
+
+  g_run = 0;
 
   struct sRobotConfigure robot_configure;
 
@@ -285,17 +245,14 @@ void main_thread()
 
 
 
-
-
   c_robot.init();
   c_robot.set_configure(robot_configure);
 
   c_line_follower.init(&c_robot);
   c_obstacle.init(&c_robot);
   c_broken_line.init(&c_robot);
+  c_map.init(&c_robot);
 
-
-  //motor_test();
 
 
   if (c_robot.get_error_type() != 0)
@@ -308,17 +265,21 @@ void main_thread()
 
   create_thread(line_sensor_thread, line_sensor_thread_stack, sizeof(line_sensor_thread_stack), PRIORITY_MAX);
   create_thread(imu_sensor_thread, imu_sensor_thread_stack, sizeof(imu_sensor_thread_stack), PRIORITY_MAX);
-  // create_thread(telemetry_thread, telemetry_thread_stack, sizeof(telemetry_thread_stack), PRIORITY_MAX + 20);
+  //create_thread(telemetry_thread, telemetry_thread_stack, sizeof(telemetry_thread_stack), PRIORITY_MAX + 20);
+
+
 
   while (1)
   {
     if (get_key() != 0)
     {
       timer_delay_ms(1000);
+      g_run = 1;
       line_follower();
+      //c_obstacle.test();
     }
 
-    printf_("encoder : %u %u\n", left_encoder_read(), right_encoder_read());
+    printf_("encoders %u %u %u\n", encoder_get_distance(), left_encoder_read(), right_encoder_read() );
 
     led_on(LED_0);
     timer_delay_ms(100);

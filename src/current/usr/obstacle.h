@@ -26,6 +26,8 @@ class CObstacle
 
 		void rotate_robot(i32 angle);
 		void go_forward(i32 speed, u32 time, u8 (*term_fun)());
+		void go_forward_encoder(i32 speed, u32 distance, u8 (*term_fun)());
+
 };
 
 #endif

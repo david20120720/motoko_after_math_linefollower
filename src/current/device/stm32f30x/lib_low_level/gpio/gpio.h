@@ -16,6 +16,9 @@ extern "C" {
 //#define KEY 		(1<<9)
 #define KEY 		(1<<12)
 
+#define ENCODER_CONSTANT ((u32)750) //670
+
+
 
 void gpio_init();
 void led_on(u32 led);
@@ -23,13 +26,17 @@ void led_off(u32 led);
 u32 get_key();
 u32 get_mode_jumper();
 
-
+//return distance in mm
 u32 left_encoder_read();
+
+//return distance in mm
 u32 right_encoder_read();
-void encoder_reset();
 
 //return averaged distance in mm
 u32 encoder_get_distance();
+
+
+void encoder_reset();
 
 #ifdef __cplusplus
 }

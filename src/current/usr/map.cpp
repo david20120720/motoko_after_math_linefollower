@@ -19,68 +19,11 @@ i32 curve_type[CURVE_TYPES_COUNT] =
 
 struct sState g_map[STORED_STATES_COUNT];
 
-void save_state(struct sState state, u32 idx)
-{
-  i2cStart();
-
-  i2cWrite( (MEMORY_I2C_ADDRESS| ((idx>>8)<<1) )&0xfe );
-  i2cWrite(idx&0xff);
-
-  i2cWrite(state.item);
-  i2cWrite( (state.distance>>24)&0xff );
-  i2cWrite( (state.distance>>16)&0xff );
-  i2cWrite( (state.distance>>8)&0xff );
-  i2cWrite( (state.distance>>0)&0xff );
-
-  i2cStop();
-}
-
-struct sState load_state(u32 idx)
-{
-  struct sState res;
-
-
-  i2cStart();
-
-  i2cWrite( (MEMORY_I2C_ADDRESS| ((idx>>8)<<1) )&0xfe );  /*slave address, write command*/
-  i2cWrite( idx&0xff);  /*send reg address*/
-
-  i2cStart();
-  i2cWrite((MEMORY_I2C_ADDRESS| ((idx>>8)<<1))|0x01); /*slave address, read command*/
-  res.item = i2cRead(1);                  /*read data*/
-  res.distance = ((u32)i2cRead(1))<<24;   /*read data*/
-  res.distance|= ((u32)i2cRead(1))<<16;   /*read data*/
-  res.distance|= ((u32)i2cRead(1))<<8;   /*read data*/
-  res.distance|= ((u32)i2cRead(0))<<0;   /*read data*/
-  i2cStop();
-
-  return res;
-}
-
-
-
-i32 function(u32 map_position, u32 encoder_position, i32 d_max)
-{
-  i32 dif = map_position - encoder_position;
-  i32 res = 0;
-
-  if (dif < 0)
-    dif = -dif;
-
-  if (dif > d_max)
-    res = 0;
-  else
-    res = 1000 - (dif*1000)/d_max;
-
-  return res;
-}
 
 
 CMap::CMap()
 {
-  encoder_reset();
-
-  state_idx = 0;
+  init(NULL);
 }
 
 
@@ -89,6 +32,31 @@ CMap::~CMap()
 
 }
 
+void CMap::init(class CRobot *robot_)
+{
+  if (robot_ == NULL)
+    return;
+
+  robot = robot_;
+
+  state_idx = 0;
+//  load_states();
+
+/*
+  u32 i;
+  printf_("\n\n");
+  for (i = 0; i < STORED_STATES_COUNT; i++)
+  {
+    if ((i%8) == 0)
+      printf_("\n");
+
+    struct sState state = get_state(i);
+    printf_("[ %u %u ] ", state.item, state.distance);
+  }
+
+  printf_("\n\n");
+  */
+}
 
 void CMap::load_states()
 {
@@ -100,9 +68,11 @@ void CMap::load_states()
 
 
 
-void CMap::add_to_map(i32 line_position)
+void CMap::add_to_map()
 {
   u32 i;
+  i32 line_position = robot->get_line_position_sensor()->line_position;
+
 
   i32 min_dist = ROBOT_LINE_MAX*10;
   u32 min_idx = 0;
@@ -135,12 +105,43 @@ void CMap::add_to_map(i32 line_position)
     save_state(state, state_idx);
 
     state_idx+= 1;
-
-    encoder_reset();
   }
 }
 
 struct sState CMap::get_state(u32 idx)
 {
   return g_map[idx];
+}
+
+
+void CMap::save_state(struct sState state, u32 idx)
+{
+  idx = idx*sizeof(struct sState);
+  log_write(idx, (char*)(&state), sizeof(struct sState));
+}
+
+struct sState CMap::load_state(u32 idx)
+{
+  struct sState res;
+
+  idx = idx*sizeof(struct sState);
+  log_read(idx, (char*)(&res), sizeof(struct sState));
+  return res;
+}
+
+
+i32 CMap::window_function(u32 map_position, u32 encoder_position, i32 d)
+{
+  i32 t = 100;
+
+  i32 tmp = encoder_position - map_position;
+
+  if (tmp < 0)
+    tmp = -tmp;
+
+  i32 res = 0;
+  if (tmp < d)
+    res = t - (t*tmp)/d;
+
+  return res;
 }

@@ -48,16 +48,14 @@ void gpio_init()
 	led_on(LED_0);
 
 
-	encoder_reset();
-
 
 	EXTI_InitTypeDef EXTI_InitStructure;
 	NVIC_InitTypeDef   NVIC_InitStructure;
 
 
-	/* Configure PC6 and PC12 pin as input floating */
+	/* Configure PC6 and PC12 pin as input pullup */
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_12;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
@@ -77,8 +75,8 @@ void gpio_init()
 
 	/* Enable and set EXTI Line9-5 Interrupt to the lowest priority */
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x01;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0F;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
@@ -96,17 +94,22 @@ void gpio_init()
 
 	/* Enable and set EXTI Line15-10 Interrupt to the lowest priority */
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x01;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0F;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
+	EXTI_ClearITPendingBit(EXTI_Line6);
+	EXTI_ClearITPendingBit(EXTI_Line12);
+
+	encoder_reset();
 }
 
 void EXTI9_5_IRQHandler(void)
 {
 	g_left_encoder++;
 	EXTI_ClearITPendingBit(EXTI_Line6);
+
 }
 
 void EXTI15_10_IRQHandler()
@@ -140,21 +143,31 @@ u32 get_mode_jumper()
 
 u32 left_encoder_read()
 {
-	return g_left_encoder;
+	__disable_irq();
+	volatile u32 tmp = g_left_encoder;
+	__enable_irq();
+
+	return (tmp*ENCODER_CONSTANT)/((u32)1000);
 }
 
 u32 right_encoder_read()
 {
-	return g_right_encoder;
-}
+	__disable_irq();
+	volatile u32 tmp = g_right_encoder;
+	__enable_irq();
 
-void encoder_reset()
-{
-	g_left_encoder = 0;
-	g_right_encoder = 0;
+	return (tmp*ENCODER_CONSTANT)/((u32)1000);
 }
 
 u32 encoder_get_distance()
 {
-	return ((g_left_encoder + g_right_encoder)*5585)/1000;
+	return (left_encoder_read() + right_encoder_read())/((u32)2);
+}
+
+void encoder_reset()
+{
+	__disable_irq();
+	g_left_encoder = 0;
+	g_right_encoder = 0;
+	__enable_irq();
 }
