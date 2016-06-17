@@ -332,7 +332,7 @@ u32 CRobot::lsm9ds0_init()
 
 		lsm9ds0_read();
 
-		u32 i, measurments = 16;
+		u32 i, measurments = 64;
 
 		i32 gx_ofs_sum = 0;
 		i32 gy_ofs_sum = 0;

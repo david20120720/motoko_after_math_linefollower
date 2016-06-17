@@ -70,6 +70,7 @@ void CLineFollower::process()
 	base_speed = m_min(base_speed + ks1*(1.0 - error_), 1.0 - ks2*error_);
 	base_speed = m_saturate(base_speed, speed_min, speed_max);
 
+
 	dif_speed = pid_process(&line_pid, error);
 
 	i32 motor_right = (base_speed - dif_speed)*SPEED_MAX;

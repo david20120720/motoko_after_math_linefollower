@@ -55,17 +55,19 @@ void CObstacle::process()
 	}
 	*/
 
+	u32 obstacle_size = 300;
 	go_forward(0, 50, NULL);
 	go_forward_encoder(-50, 30, NULL);
 
 	rotate_robot(90);
-	go_forward_encoder(80, 270, NULL);
+	go_forward_encoder(90, (obstacle_size*9)/10, NULL);
 
 	rotate_robot(-90);
-	go_forward_encoder(80, 350, NULL);
+	go_forward_encoder(90, 350, NULL);
 
 	rotate_robot(-90);
-	go_forward_encoder(80, 300, robot_on_line);
+	go_forward_encoder(90, obstacle_size, robot_on_line);
+	//go_forward_encoder(80, 300, NULL);
 
 	rotate_robot(90);
 }
@@ -81,17 +83,52 @@ i32 CObstacle::abs_(i32 x)
 
 void CObstacle::rotate_robot(i32 angle)
 {
-	angle = (angle*900)/90;
-	//angle = (angle*1100)/90;
+	//angle = (angle*900)/90;
+	angle = (angle*1610)/90;
 
-	float speed_max = 0.4;
-	float ks = speed_max/10.0;
+	float speed_max = 0.2;
+	float ks = speed_max/20.0;
 
 
 	this->robot->reset_imu();
 
 	float speed_dif = 0.0;
 	while (abs_(robot->get_imu_sensor()->yaw) < abs_(angle))
+	{
+		speed_dif+= ks;
+		if (speed_dif > speed_max)
+			speed_dif = speed_max;
+
+
+		i32 speed_ = SPEED_MAX*speed_dif;
+		if (angle > 0)
+			robot->set_motors(speed_, -speed_);
+		else
+			robot->set_motors(-speed_, speed_);
+
+		timer_delay_ms(10);
+	}
+
+	robot->set_motors(0, 0);
+	timer_delay_ms(200);
+}
+
+
+
+void CObstacle::rotate_robot_encoder(i32 angle)
+{
+	i32 angle_ = angle;
+
+	if (angle_ < 0)
+		angle_ = -angle;
+
+	u32 distance_end = encoder_get_distance() + angle_;
+
+	float speed_max = 0.2;
+	float ks = speed_max/20.0;
+
+	float speed_dif = 0.0;
+	while (encoder_get_distance() < distance_end)
 	{
 		speed_dif+= ks;
 		if (speed_dif > speed_max)
@@ -183,7 +220,7 @@ void CObstacle::go_forward_encoder(i32 speed, u32 distance, u8 (*term_fun)())
 	float kd = 0.1;
 
 	float speed_ = 0.0;
-	float ks = 1.4;
+	float ks = 2.0;
 
 	float sgn = 1.0;
 	if (speed < 0)
@@ -208,6 +245,10 @@ void CObstacle::go_forward_encoder(i32 speed, u32 distance, u8 (*term_fun)())
 
 			float dif = kp*error + kd*(error - error_prev);
 
+
+			if ((m_abs(distance_end - encoder_get_distance()) < 40.0) && (speed_ > 70.0))
+				speed_-= ks;
+			else
 			if (speed_ < speed)
 				speed_+= ks;
 
@@ -231,35 +272,27 @@ void CObstacle::go_forward_encoder(i32 speed, u32 distance, u8 (*term_fun)())
 
 void CObstacle::test()
 {
-	/*
-	go_forward_encoder(50, 300, NULL);
+//	go_forward_encoder(50, 15*1000, NULL);
+
+/*
+	go_forward_encoder(50, 200, NULL);
 	rotate_robot(90);
 
-	go_forward_encoder(50, 300, NULL);
+	go_forward_encoder(50, 200, NULL);
 	rotate_robot(90);
 
-	go_forward_encoder(50, 300, NULL);
+	go_forward_encoder(50, 200, NULL);
 	rotate_robot(90);
 
-	go_forward_encoder(50, 300, NULL);
+	go_forward_encoder(50, 200, NULL);
 	rotate_robot(90);
 */
 
-
-	go_forward(0, 50, NULL);
-	go_forward_encoder(-50, 30, NULL);
-
+	process();
+/*
 	rotate_robot(90);
-	go_forward_encoder(80, 270, NULL);
-
 	rotate_robot(-90);
-	go_forward_encoder(80, 350, NULL);
-
-	rotate_robot(-90);
-	go_forward_encoder(80, 300, robot_on_line);
-
-	rotate_robot(90);
-
+	*/
 }
 
 

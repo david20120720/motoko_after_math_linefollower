@@ -182,12 +182,12 @@ void telemetry_thread()
 //#define LINE_SENSOR_TRESHOLD	        (i32)120
 #define OBSTACLE_TRESHOLD		         (i32)700
 
-#define CONFIG_USE_PREDICTOR         0      /*this enables line shape predictor to estimate erro value*/
+#define CONFIG_USE_PREDICTOR         0      /*this enables line shape predictor to estimate error value*/
 
 #if CONFIG_USE_PREDICTOR == 0
-#define   CONFIG_KP                 (i32)70  /*proportional, 0.326*/
+#define   CONFIG_KP                 (i32)60  /*proportional, 0.326*/
 #define   CONFIG_KI                 (i32)0    /*integrate*/
-#define   CONFIG_KD                 (i32)3500 //4530  /*derivative., 10.53*/
+#define   CONFIG_KD                 (i32)3000 //4530  /*derivative., 10.53*/
 #define   CONFIG_KD2                (i32)0    /*second derivative*/
 #else
 #define   CONFIG_KP                 (i32)217  /*proportional, 0.326*/
@@ -196,18 +196,18 @@ void telemetry_thread()
 #define   CONFIG_KD2                (i32)0    /*second derivative*/
 #endif
 
-#define   CONFIG_KS_1               (i32)20       /*speed rising time*/
+#define   CONFIG_KS_1               (i32)40       /*speed rising time*/
 #define   CONFIG_KS_2               (i32)5000   /*speed rising time*/
-#define   CONFIG_SPEED_MIN          (i32)500      /*minimal robot speed*/
-#define   CONFIG_SPEED_MAX          (i32)800      /*maximal robot speed*/
+#define   CONFIG_SPEED_MIN          (i32)400      /*minimal robot speed*/
+#define   CONFIG_SPEED_MAX          (i32)700      /*maximal robot speed*/
 
 
 /*
   broken line search parameters
 */
 
-#define CONFIG_LINE_SEARCH_TIME 	  (u32)500     /*one curve time in ms*/
-#define CONFIG_LINE_SEARCH_SPEED 	  (i32)50      /*in 0..100 range*/
+#define CONFIG_LINE_SEARCH_TIME 	  (u32)400     /*one curve time in ms*/
+#define CONFIG_LINE_SEARCH_SPEED 	  (i32)40      /*in 0..100 range*/
 
 
 
@@ -276,10 +276,9 @@ void main_thread()
       timer_delay_ms(1000);
       g_run = 1;
       line_follower();
-      //c_obstacle.test();
     }
 
-    printf_("encoders %u %u %u\n", encoder_get_distance(), left_encoder_read(), right_encoder_read() );
+    printf_("encoders %u %u %u, yaw %i\n", encoder_get_distance(), left_encoder_read(), right_encoder_read(), c_robot.get_imu_sensor()->yaw );
 
     led_on(LED_0);
     timer_delay_ms(100);
