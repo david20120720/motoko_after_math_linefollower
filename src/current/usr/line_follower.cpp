@@ -27,6 +27,8 @@ void CLineFollower::init(class CRobot *robot_)
 
 	c_q_predictor.init();
 
+	timer_stop = timer_get_time() + 100;
+
 	pid_init(&line_pid, SPEED_MAX,
 						this->robot->get_robot_configure()->kp/1000.0,
 						this->robot->get_robot_configure()->ki/1000.0,
@@ -47,6 +49,9 @@ void CLineFollower::process()
 {
 	float line_position = (1.0*robot->get_line_position_sensor()->line_position)/ROBOT_LINE_MAX;
 
+	if (timer_get_time() < timer_stop )
+		line_position = 0.0;
+
 	float required_position = 0.0;	//line center
 
 	/*
@@ -66,10 +71,12 @@ void CLineFollower::process()
 	}
 	#endif
 
-
+/*
 	base_speed = m_min(base_speed + ks1*(1.0 - error_), 1.0 - ks2*error_);
 	base_speed = m_saturate(base_speed, speed_min, speed_max);
+*/
 
+	base_speed = 0.3;
 
 	dif_speed = pid_process(&line_pid, error);
 
@@ -77,4 +84,9 @@ void CLineFollower::process()
 	i32 motor_left = (base_speed + dif_speed)*SPEED_MAX;
 
 	this->robot->set_motors(motor_left, motor_right);
+}
+
+void CLineFollower::start()
+{
+	timer_stop = timer_get_time() + 300;
 }

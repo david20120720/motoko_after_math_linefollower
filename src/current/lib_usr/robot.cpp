@@ -1,18 +1,25 @@
 #include "robot.h"
 #include "lsm9ds0_regs.h"
-
+/*
 i32 rgb_sensor_calibration_ambient[]	=	{694, 845, 1003, 823, 854, 924, 940, 685, 206};
 i32 rgb_sensor_calibration_r[] = 				 {219, 257, 288, 236, 239, 265, 264, 197, 76};
 i32 rgb_sensor_calibration_g[] = 				 {258, 316, 365, 305, 309, 342, 339, 251, 80};
 i32 rgb_sensor_calibration_b[] = 				 {252, 307, 363, 293, 304, 338, 349, 260, 75};
+*/
 
 
 /*
-i32 rgb_sensor_calibration_ambient[]	=	{0, 0, 0, 0, 0, 0, 0, 0, 0};
-i32 rgb_sensor_calibration_r[] = 				{0, 0, 0, 0, 0, 0, 0, 0, 0};
-i32 rgb_sensor_calibration_g[] = 				{0, 0, 0, 0, 0, 0, 0, 0, 0};
-i32 rgb_sensor_calibration_b[] = 				{0, 0, 0, 0, 0, 0, 0, 0, 0};
+i32 rgb_sensor_calibration_ambient[]	=	{489, 709, 798, 735, 656, 806, 732, 598};
+i32 rgb_sensor_calibration_r[] = 				{134, 184, 204, 182, 167, 202, 189, 172};
+i32 rgb_sensor_calibration_g[] = 				{174, 267, 295, 269, 238, 294, 270, 204};
+i32 rgb_sensor_calibration_b[] = 				{174, 277, 311, 284, 243, 308, 281, 223};
 */
+
+i32 rgb_sensor_calibration_ambient[]	=	{0, 0, 0, 0, 0, 0, 0, 0};
+i32 rgb_sensor_calibration_r[] = 				{0, 0, 0, 0, 0, 0, 0, 0};
+i32 rgb_sensor_calibration_g[] = 				{0, 0, 0, 0, 0, 0, 0, 0};
+i32 rgb_sensor_calibration_b[] = 				{0, 0, 0, 0, 0, 0, 0, 0};
+
 
 
 i16 rgb_sensor_w[] =
@@ -32,6 +39,7 @@ void CRobot::init()
 	error_code = 0;
 	error_type = 0;
 
+	//init and calibrate RGB sensors
 	res = line_sensor_init();
 	if (res != 0)
 	{
@@ -48,7 +56,7 @@ void CRobot::init()
 	obstacle_position_sensor.obstacle = 0;
 	obstacle_position_sensor.obstacle_position = 0;
 
-
+	//init and calibrate IMU
 	res = lsm9ds0_init();
 	if (res != 0)
 	{
@@ -139,7 +147,7 @@ void CRobot::process_imu_sensor()
 
 u32 CRobot::line_sensor_init()
 {
-	u32 i;
+	u32 i, j;
 
 	rgb_init();
 	rgb_read();
@@ -158,14 +166,60 @@ u32 CRobot::line_sensor_init()
 	for (i = 0; i < ROBOT_LINE_SENSORS_COUNT; i++)
 		line_sensor_raw_data_dif[i] = 0;
 
+
+	//RGB sensors calibration
+	u32 rgb_measurments_count = 64;
+
+	for (i = 0; i < ROBOT_LINE_SENSORS_COUNT; i++)
+	{
+		rgb_sensor_calibration_ambient[i] = 0;
+		rgb_sensor_calibration_r[i] = 0;
+		rgb_sensor_calibration_g[i] = 0;
+		rgb_sensor_calibration_b[i] = 0;
+	}
+
+	for (j = 0; j < rgb_measurments_count; j++)
+	{
+		rgb_read();
+		for (i = 0; i < ROBOT_LINE_SENSORS_COUNT; i++)
+		{
+			rgb_sensor_calibration_ambient[i]+= rgb_get()->ambient[i];
+			rgb_sensor_calibration_r[i]+= rgb_get()->r[i];
+			rgb_sensor_calibration_g[i]+= rgb_get()->g[i];
+			rgb_sensor_calibration_b[i]+= rgb_get()->b[i];
+		}
+
+		timer_delay_ms(5);
+	}
+
+	for (i = 0; i < ROBOT_LINE_SENSORS_COUNT; i++)
+	{
+		rgb_sensor_calibration_ambient[i]/= rgb_measurments_count;
+		rgb_sensor_calibration_r[i]/= rgb_measurments_count;
+		rgb_sensor_calibration_g[i]/= rgb_measurments_count;
+		rgb_sensor_calibration_b[i]/= rgb_measurments_count;
+	}
+
 	line_sensor_read();
+
+	for (j = 0; j < ROBOT_LINE_SENSORS_WINDOW_SIZE; j++)
+	{
+		line_sensor_read();
+
+		for (i = 0; i < ROBOT_LINE_SENSORS_COUNT; i++)
+			line_sensor_raw_data_window[j][i] = line_sensor_raw_data_dif[i];
+
+		timer_delay_ms(5);
+	}
+
+
 	return rgb_error_result;
 }
 
 
 void CRobot::line_sensor_read()
 {
-	u32 i;
+	u32 i, j;
 
 	/* calculate obstacle position */
 	obstacle_position_sensor.obstacle_position = (obstacle_position_sensor.obstacle_position*7 + rgb_get()->proximity[ROBOT_SENSORS_COUNT-1])/8;
@@ -174,7 +228,6 @@ void CRobot::line_sensor_read()
 		obstacle_position_sensor.obstacle = ROBOT_OBSTACLE_SENSOR_FLAG_OBSTACLE;
 	else
 		obstacle_position_sensor.obstacle = 0;
-
 
 
 	i32 average_ambient = 0;
@@ -213,13 +266,25 @@ void CRobot::line_sensor_read()
 		line_sensor_raw_data_dif[i] = rgb_get()->ambient[i];
 	}
 
+	for (j = (ROBOT_LINE_SENSORS_WINDOW_SIZE-1); j > 0; j--)
+	{
+		for (i = 0; i < ROBOT_LINE_SENSORS_COUNT; i++)
+			line_sensor_raw_data_window[j][i] = line_sensor_raw_data_window[j-1][i];
+	}
+
+	for (i = 0; i < ROBOT_LINE_SENSORS_COUNT; i++)
+		line_sensor_raw_data_window[0][i] = line_sensor_raw_data_dif[i];
+
+
 	i32 line_position = 0, value = 0, tmp = 0;
 
+	u32 cnt = 0;
 	tmp = line_sensor_raw_data_dif[3] + line_sensor_raw_data_dif[4];
 	if (tmp != 0)
 	{
 		line_position = ( line_sensor_raw_data_dif[3]*rgb_sensor_w[3] + line_sensor_raw_data_dif[4]*rgb_sensor_w[4] )/tmp;
 		value = ( line_sensor_raw_data_dif[3] + line_sensor_raw_data_dif[4])/2;
+		cnt++;
 	}
 
 	tmp = line_sensor_raw_data_dif[5] + line_sensor_raw_data_dif[4];
@@ -227,6 +292,7 @@ void CRobot::line_sensor_read()
 	{
 		line_position = ( line_sensor_raw_data_dif[5]*rgb_sensor_w[5] + line_sensor_raw_data_dif[4]*rgb_sensor_w[4] )/tmp;
 		value = line_sensor_raw_data_dif[5];
+		cnt++;
 	}
 
 	tmp = line_sensor_raw_data_dif[2] + line_sensor_raw_data_dif[3];
@@ -234,6 +300,7 @@ void CRobot::line_sensor_read()
 	{
 		line_position = ( line_sensor_raw_data_dif[2]*rgb_sensor_w[2] + line_sensor_raw_data_dif[3]*rgb_sensor_w[3] )/tmp;
 		value = line_sensor_raw_data_dif[2];
+		cnt++;
 	}
 
 	tmp = line_sensor_raw_data_dif[6] + line_sensor_raw_data_dif[5];
@@ -241,6 +308,7 @@ void CRobot::line_sensor_read()
 	{
 			line_position = ( line_sensor_raw_data_dif[6]*rgb_sensor_w[6] + line_sensor_raw_data_dif[5]*rgb_sensor_w[5] )/tmp;
 			value = line_sensor_raw_data_dif[6];
+			cnt++;
 	}
 
 	tmp = line_sensor_raw_data_dif[1] + line_sensor_raw_data_dif[2];
@@ -248,19 +316,29 @@ void CRobot::line_sensor_read()
 	{
 			line_position = ( line_sensor_raw_data_dif[1]*rgb_sensor_w[1] + line_sensor_raw_data_dif[2]*rgb_sensor_w[2] )/tmp;
 			value = line_sensor_raw_data_dif[1];
+			cnt++;
 	}
 
-	if (line_sensor_raw_data_dif[0] > robot_configure.line_sensor_treshold)
-	{
-		line_position = rgb_sensor_w[0];
-		value = line_sensor_raw_data_dif[0];
-	}
-
-	if (line_sensor_raw_data_dif[7] > robot_configure.line_sensor_treshold)
+	if (line_sensor_raw_data_dif[7] > ((100*robot_configure.line_sensor_treshold)/100))
 	{
 			line_position = rgb_sensor_w[7];
 			value = line_sensor_raw_data_dif[7];
+			cnt++;
 	}
+
+	if (line_sensor_raw_data_dif[0] > ((100*robot_configure.line_sensor_treshold)/100) )
+	{
+		line_position = rgb_sensor_w[0];
+		value = line_sensor_raw_data_dif[0];
+		cnt++;
+	}
+
+
+
+
+
+
+
 
 	if (value > robot_configure.line_sensor_treshold)
 	{
@@ -279,9 +357,14 @@ void CRobot::line_sensor_read()
 	}
 }
 
-i32* CRobot::get_line_sensor_raw_data_dif()
+i16* CRobot::get_line_sensor_raw_data_dif()
 {
 	return line_sensor_raw_data_dif;
+}
+
+i16* CRobot::get_line_sensor_raw_data_dif_window(u32 idx)
+{
+	return line_sensor_raw_data_window[idx];
 }
 
 u32 CRobot::lsm9ds0_init()

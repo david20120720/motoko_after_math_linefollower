@@ -15,7 +15,7 @@ i32 curve_type[CURVE_TYPES_COUNT] =
   -(ROBOT_LINE_MAX*95)/100,
   -(ROBOT_LINE_MAX*100)/100
 };
-
+ 
 
 struct sState g_map[STORED_STATES_COUNT];
 

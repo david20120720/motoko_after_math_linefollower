@@ -10,6 +10,8 @@
 #define ROBOT_LINE_SENSORS_COUNT 						(8)
 #define ROBOT_SENSORS_COUNT 								(ROBOT_LINE_SENSORS_COUNT + 1)
 
+#define ROBOT_LINE_SENSORS_WINDOW_SIZE			(16)
+
 
 #define ROBOT_LINE_STEP_W										64
 #define ROBOT_LINE_MAX 				 							(i32)(ROBOT_LINE_STEP_W*4)
@@ -90,11 +92,14 @@ class CRobot
     void process_rgb_sensors();
     void process_imu_sensor();
 
-		i32* get_line_sensor_raw_data_dif();
+		i16* get_line_sensor_raw_data_dif();
+		i16* get_line_sensor_raw_data_dif_window(u32 idx);
 
   private:
     u8 line_sensor_tmp[ROBOT_SENSORS_COUNT];
-    i32 line_sensor_raw_data_dif[ROBOT_LINE_SENSORS_COUNT];
+    i16 line_sensor_raw_data_dif[ROBOT_LINE_SENSORS_COUNT];
+
+		i16 line_sensor_raw_data_window[ROBOT_LINE_SENSORS_WINDOW_SIZE][ROBOT_LINE_SENSORS_COUNT];
 
 
     i16 ax, ay, az; //accelerometer raw
