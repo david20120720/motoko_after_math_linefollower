@@ -296,10 +296,16 @@ void main_thread()
     {
       timer_delay_ms(300);
       g_run = 1;
-      c_line_follower.start();
-      line_follower();
+      //c_line_follower.start();
+      //line_follower();
       //c_obstacle.test();
       //c_broken_line.test();
+
+      drv8834_run(30, 30);
+      timer_delay_ms(500);
+
+      drv8834_run(0, 0);
+      timer_delay_ms(50);
 
       /*
       drv8834_run(20, 0);
